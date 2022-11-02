@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <memory>
 
 // Athena++ header
 //#include <athena.hpp>
@@ -34,7 +35,7 @@ public:
   std::stringstream msg;
 
 // functions
-  Debugger();
+  Debugger(int depth = 0);
   ~Debugger();
 
   /*Debugger* StartTracking(std::string name);
@@ -79,12 +80,17 @@ public:
   static void Print(std::string name, T const& value);
 
 protected:
-  std::string fname_;
+  int                     depth_, current_depth_;
+  std::string             fname_;
+
   //AthenaArray<Real> data_;
   std::vector<std::string> vnames_;
   std::vector<std::string> sections_;
   std::vector<std::string> idstack_next_;
 };
+
+// global debugger
+extern std::unique_ptr<Debugger> pdebug;
 
 #include "debugger_impl.hpp"
 

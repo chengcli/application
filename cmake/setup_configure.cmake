@@ -1,6 +1,6 @@
 ## set up model configuration ##
 
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "DebugRelease")
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   if (NOT "DEBUG" IN_LIST BUILD_TYPES)

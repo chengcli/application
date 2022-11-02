@@ -15,23 +15,34 @@
 #   include_directories( ${DEBUGGER_INCLUDE_DIR})
 #   target_link_libraries( ${DEBUGGER_LIBRARY_DEBUG})
 #
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.18)
 
 project(
   debugger
   LANGUAGES CXX
   )
 
-## set up compiler flags ##
+## 1. set up compiler flags ##
 message(STATUS "")
 message(STATUS "Set up project compiler flags ...")
 message(STATUS "Include ${CMAKE_SOURCE_DIR}/cmake/setup_compiler_flags.cmake")
 include(${CMAKE_SOURCE_DIR}/cmake/setup_compiler_flags.cmake)
 
-## set up project configuration ##
+## 2. set up project configuration ##
 message(STATUS "Set up project configuration flags ...")
 message(STATUS "Include ${CMAKE_SOURCE_DIR}/cmake/setup_configure.cmake")
 include(${CMAKE_SOURCE_DIR}/cmake/setup_configure.cmake)
+
+## 3. set up project paths ##
+message(STATUS "")
+message(STATUS "Set up project paths ...")
+set(EXECUTABLE_RELDIR "bin")
+set(INCLUDE_RELDIR "include")
+set(SOURCE_RELDIR "source")
+
+## 4. set up project library ##
+message(STATUS "")
+message(STATUS "Set up project complication and installation ...")
 
 file(GLOB _src_files
   src/*.cpp
@@ -53,9 +64,12 @@ foreach(build ${BUILD_TYPES})
   mark_as_advanced(DEBUGGER_LIBRARY_${build})
 endforeach()
 
-set(DEBUGGER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR} 
+set(DEBUGGER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src
   CACHE PATH 
   "debugger include directory")
 set(DEBUGGER_FOUND TRUE CACHE BOOL "FIND DEBUGGER LIBRARY")
 mark_as_advanced(DEBUGGER_INCLUDE_DIR)
 mark_as_advanced(DEBUGGER_FOUND)
+
+## 5. set up test cases
+add_subdirectory(tests)

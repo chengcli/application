@@ -20,8 +20,9 @@ std::string const Debugger::cend = "\033[0m";
 // global debugger
 std::unique_ptr<Debugger> pdebug;
 
-Debugger::Debugger():
-  prev(nullptr), next(nullptr), fname_("HEAD")
+Debugger::Debugger(int depth):
+  prev(nullptr), next(nullptr), fname_("HEAD"),
+  depth_(depth), current_depth_(0)
 {
   //data_.NewAthenaArray(2*NHYDRO, pmb->ncells3, pmb->ncells2, pmb->ncells1);
   idstack_next_.push_back("1.");
@@ -217,17 +218,18 @@ void Debugger::DumpTracking(std::string name, int c1, int c2, int c3, char const
 void Debugger::Enter(std::string name, std::string heil) {
   sections_.push_back(name);
   std::string id = idstack_next_.back();
-  int level = std::count(idstack_next_.back().begin(), idstack_next_.back().end(), '.') - 1;
-#if DEBUG_LEVEL > 0
-  if (Globals::my_rank == 0) {
+
+  if (Globals::my_rank == 0 && current_depth_ < depth_) {
     std::cout << msg.str() << id << " " << heil << " " << name << " ..." << std::endl;
   }
-#endif
+
   idstack_next_.push_back(id + "1.");
   msg.str("");
+  current_depth_++;
 }
 
 void Debugger::Leave() {
+  current_depth_--;
   std::stringstream ss;
   if (sections_.size() == 0) {
     Fatal("Debugger::Leave", "Caller stack is empty");
@@ -237,13 +239,9 @@ void Debugger::Leave() {
   sections_.pop_back();
   idstack_next_.pop_back();
   increment_id(idstack_next_.back());
-  //int level = std::count(idstack_next_.back().begin(), idstack_next_.back().end(), '.') - 1;
-#if DEBUG_LEVEL > 0
-  if (Globals::my_rank == 0) {
-    //for (int n = 0; n < level; ++n) std::cout << '\t';
+  if (Globals::my_rank == 0 && current_depth_ < depth_) {
     std::cout << msg.str() << name << " done." << std::endl;
   }
-#endif
   msg.str("");
 }
 
@@ -321,24 +319,17 @@ Debugger *Debugger::Message(std::string str) {
 void Debugger::Fatal(std::string where, std::string what){
   std::cout << "### FATAL ERROR in " << where << std::endl;
   throw std::runtime_error(what.c_str());
-
-#ifdef MPI_PARALLEL
-  MPI_Finalize();
-#endif
 }
 
 void Debugger::Fatal(std::string where, std::string str, std::string what){
   std::cout << "### FATAL ERROR in " << where << " " << str << std::endl;
   throw std::runtime_error(what.c_str());
-
-#ifdef MPI_PARALLEL
-  MPI_Finalize();
-#endif
 }
 
-void Debugger::Print(std::string str){
-  if (Globals::my_rank == 0) 
+void Debugger::Print(std::string str) {
+  if (Globals::my_rank == 0)  {
     std::cout << str << std::endl;
+  }
 }
 
 void increment_id(std::string &str) {
