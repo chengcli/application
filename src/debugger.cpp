@@ -5,12 +5,7 @@
 #include <algorithm>
 #include <memory>
 
-// Athena++ headers
-//#include <coordinates/coordinates.hpp>
-#include <globals.hpp>
-
 // harp2 headers
-#include <configure.hpp>
 #include "debugger.hpp"
 //#include "../particles/material_point.hpp"
 
@@ -235,9 +230,7 @@ void Debugger::Enter(std::string name, std::string heil) {
 void Debugger::Leave() {
   std::stringstream ss;
   if (sections_.size() == 0) {
-    ss << "### FATAL ERROR in Debugger::Leave"
-       << std::endl << "Caller stack is empty.";
-    ATHENA_ERROR(ss);
+    Fatal("Debugger::Leave", "Caller stack is empty");
   }
 
   std::string name = sections_.back();
@@ -254,7 +247,7 @@ void Debugger::Leave() {
   msg.str("");
 }
 
-void Debugger::CheckConservation(std::string name, AthenaArray<Real> const& var,
+/*void Debugger::CheckConservation(std::string name, AthenaArray<Real> const& var,
     int is, int ie, int js, int je, int ks, int ke) {
   int nvar = var.GetDim4();
   Real *sum = new Real [nvar];
@@ -283,7 +276,7 @@ void Debugger::CheckConservation(std::string name, AthenaArray<Real> const& var,
     msg << ")" << std::endl;
   }
   delete[] sum;
-}
+}*/
 
 /*void Debugger::CheckParticleConservation(std::vector<std::string> const& cnames,
     std::vector<MaterialPoint> const& mp)

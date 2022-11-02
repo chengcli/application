@@ -1,10 +1,7 @@
 // C/C++ headers
 #include <iostream>
 
-// Athena++ headers
-#include <globals.hpp>
-
-// harp2 headers
+// debugger headers
 #include "debugger.hpp"
 
 template<typename T>

@@ -5,12 +5,18 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <cmath>
 
 // Athena++ header
-#include <athena.hpp>
-#include <globals.hpp>
+//#include <athena.hpp>
+//#include <globals.hpp>
 
-typedef int (*TestFunc_t)(Real);
+//typedef int (*TestFunc_t)(Real);
+
+// forward declaration
+namespace Globals {
+  extern int my_rank, nranks;
+}
 
 class MaterialPoint;
 
@@ -47,11 +53,11 @@ public:
 
   void Leave();
 
-  void CheckConservation(std::string name, AthenaArray<Real> const& var,
+  /*void CheckConservation(std::string name, AthenaArray<Real> const& var,
       int is, int ie, int js, int je, int ks, int ke);
 
   void CheckParticleConservation(std::vector<std::string> const& cnames,
-      std::vector<MaterialPoint> const& mp);
+      std::vector<MaterialPoint> const& mp);*/
 
   Debugger* Message(std::string str);
 
@@ -74,7 +80,7 @@ public:
 
 protected:
   std::string fname_;
-  AthenaArray<Real> data_;
+  //AthenaArray<Real> data_;
   std::vector<std::string> vnames_;
   std::vector<std::string> sections_;
   std::vector<std::string> idstack_next_;
@@ -84,8 +90,15 @@ protected:
 
 void increment_id(std::string &str);
 
-// test functions
-int IsPositive(Real v);
-int IsNumber(Real v);
+// small test functions
+template <typename T>
+int IsPositive(T v) {
+  return v > 0 ? 1 : 0;
+}
+
+template <typename T>
+int IsNumber(T v) {
+  return !std::isnan(v);
+}
 
 #endif
