@@ -38,7 +38,7 @@ jobs:
       - name: run debug
         run: ./build/bin/01_enter_leave.debug > 01.debug.out
       - name: run release
-        run: ./buidl/bin/01_enter_leave.release > 01.release.out
+        run: ./build/bin/01_enter_leave.release > 01.release.out
       - name: compare results
         run: diff 01.debug.out tests/01.out
       - name: compare results
