@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <memory>
 
-// harp2 headers
+// debugger headers
 #include "debugger.hpp"
 //#include "../particles/material_point.hpp"
 
