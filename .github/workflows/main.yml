@@ -15,11 +15,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  codecov:
-    runs-on: ubuntu-latest
-    steps:
-      - run: curl -Os https://uploader.codecov.io/latest/linux/codecov
-      - run: chmod +x codecov
   build:
     runs-on: ubuntu-latest
     steps:
@@ -34,14 +29,12 @@ jobs:
         run: mkdir build && cd build && cmake .. && make
   enter_leave:
     runs-on: ubuntu-latest
-    needs: [build, codecov]
+    needs: build
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: build system
         run: mkdir build && cd build && cmake .. && make
-      - name: run codecov
-        run: ./codecov
       - name: run debug
         run: ./build/bin/01_enter_leave.debug > 01.debug.out
       - name: run release
