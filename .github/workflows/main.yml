@@ -34,7 +34,7 @@ jobs:
         run: mkdir build && cd build && cmake .. && make
   enter_leave:
     runs-on: ubuntu-latest
-    needs: [build, codecov
+    needs: [build, codecov]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
