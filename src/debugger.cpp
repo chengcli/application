@@ -6,6 +6,7 @@
 #include <memory>
 
 // debugger headers
+#include <configure.hpp>
 #include "debugger.hpp"
 //#include "../particles/material_point.hpp"
 
@@ -318,11 +319,17 @@ Debugger *Debugger::Message(std::string str) {
 
 void Debugger::Fatal(std::string where, std::string what){
   std::cout << "### FATAL ERROR in " << where << std::endl;
+#ifdef MPI_PARALLEL
+    MPI_Finalize();
+#endif
   throw std::runtime_error(what.c_str());
 }
 
 void Debugger::Fatal(std::string where, std::string str, std::string what){
   std::cout << "### FATAL ERROR in " << where << " " << str << std::endl;
+#ifdef MPI_PARALLEL
+    MPI_Finalize();
+#endif
   throw std::runtime_error(what.c_str());
 }
 

@@ -40,9 +40,23 @@ set(EXECUTABLE_RELDIR "bin")
 set(INCLUDE_RELDIR "include")
 set(SOURCE_RELDIR "source")
 
-## 4. set up project library ##
+## 4. set up project system libraries ##
+message(STATUS "")
+message(STATUS "Set up project system libraries ...")
+
+if (${UseMPI})
+  find_package(MPI REQUIRED)
+  set(EnableMPI MPI_PARALLEL)
+else()
+  set(EnableMPI NOT_MPI_PARALLEL)
+endif()
+
+## 5. set up project library ##
 message(STATUS "")
 message(STATUS "Set up project complication and installation ...")
+
+# set up configure file
+configure_file(${CMAKE_SOURCE_DIR}/configure.hpp.in configure.hpp @ONLY)
 
 file(GLOB _src_files
   src/*.cpp
@@ -56,6 +70,16 @@ foreach(build ${BUILD_TYPES})
   set_target_properties(debugger_${buildl}
     PROPERTIES
     COMPILE_FLAGS ${CMAKE_CXX_FLAGS_${build}}
+    )
+
+  target_include_directories(debugger_${buildl}
+    SYSTEM PRIVATE
+    ${MPI_CXX_INCLUDE_PATH}
+    ${CMAKE_BINARY_DIR}
+    )
+
+  target_link_libraries(debugger_${buildl}
+    ${MPI_CXX_LIBRARIES}
     )
 
   set(DEBUGGER_LIBRARY_${build} debugger_${buildl}
