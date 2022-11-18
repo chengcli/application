@@ -21,6 +21,8 @@ project(
   debugger
   LANGUAGES CXX
   )
+set(CMAKE_CXX_STANDARD 14)
+message(STATUS "== Setting up debugger library ==")
 
 ## 1. set up compiler flags ##
 message(STATUS "")
