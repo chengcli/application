@@ -1,6 +1,8 @@
 ## set up model configuration ##
 
-set(CMAKE_BUILD_TYPE "DebugRelease")
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
+  set(CMAKE_BUILD_TYPE "DebugRelease")
+endif()
 
 # MPI flag
 option(UseMPI "Enable MPI" OFF)
