@@ -22,40 +22,30 @@ project(
   LANGUAGES CXX
   )
 set(CMAKE_CXX_STANDARD 14)
+message(STATUS "")
 message(STATUS "== Setting up debugger library ==")
 
 ## 1. set up compiler flags ##
-message(STATUS "")
-message(STATUS "Set up project compiler flags ...")
+message(STATUS "1. Set up project compiler flags ...")
 message(STATUS "Include ${CMAKE_SOURCE_DIR}/cmake/setup_compiler_flags.cmake")
 include(${CMAKE_SOURCE_DIR}/cmake/setup_compiler_flags.cmake)
 
 ## 2. set up project configuration ##
-message(STATUS "Set up project configuration flags ...")
+message(STATUS "2. Set up project configuration flags ...")
 message(STATUS "Include ${CMAKE_SOURCE_DIR}/cmake/setup_configure.cmake")
 include(${CMAKE_SOURCE_DIR}/cmake/setup_configure.cmake)
 
 ## 3. set up project paths ##
-message(STATUS "")
-message(STATUS "Set up project paths ...")
+message(STATUS "3. Set up project paths ...")
 set(EXECUTABLE_RELDIR "bin")
 set(INCLUDE_RELDIR "include")
 set(SOURCE_RELDIR "source")
 
 ## 4. set up project system libraries ##
-message(STATUS "")
-message(STATUS "Set up project system libraries ...")
-
-if (${UseMPI})
-  find_package(MPI REQUIRED)
-  set(EnableMPI MPI_PARALLEL)
-else()
-  set(EnableMPI NOT_MPI_PARALLEL)
-endif()
+message(STATUS "4. Set up project system libraries ...")
 
 ## 5. set up project library ##
-message(STATUS "")
-message(STATUS "Set up project complication and installation ...")
+message(STATUS "5. Set up project complication and installation ...")
 
 # set up configure file
 configure_file(${CMAKE_SOURCE_DIR}/configure.hpp.in configure.hpp @ONLY)
