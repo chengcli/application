@@ -1,5 +1,24 @@
 #include "application.hpp"
 
+//! Mutex for creating singletons within the application object
+static std::mutex app_mutex;
+static std::mutex monitor_mutex;
+
+Application::Logger::Logger(std::string name) {
+    auto iter = Application::mymonitor_.find(name);
+    if (iter != Application::mymonitor_.end()) {
+      cur_monitor_ = iter->second;
+      cur_monitor_->Enter();
+    } else {
+      std
+      throw Application::FatalError("Monitor %s not found.", name);
+    }
+}
+
+~Application::Logger::~Logger() {
+    cur_monitor_->Leave();
+}
+
 Application::Application()
 {
     // install a default log_writer that writes to standard
@@ -21,17 +40,29 @@ Application* Application::GetInstance()
 void Application::Destroy()
 {
     std::unique_lock<std::mutex> lock(app_mutex);
+    std::unique_lock<std::mutex> lock(monitor_mutex);
+
     if (Application::myapp_ != nullptr) {
         delete Application::myapp_;
         Application::myapp_ = nullptr;
     }
+
+    if (Application::mymonitor_ != nullptr) {
+        delete Application::mymonitor_;
+        Application::mymonitor_ = nullptr;
+    }
+}
+
+bool Application::InitMonitorLog(std::string_view mod,
+    std::string_view fname)
+{
 }
 
 void Application::WarnDeprecated(std::string_view method,
                                   const std::string& extra)
 {
     if (fatal_deprecation_warnings_) {
-        throw FatalError(method, "Deprecated: " + extra);
+        throw FatalError("Deprecated method: %s. %s", method, extra);
     } else if (suppress_deprecation_warnings_ || warnings_.count(method)) {
         return;
     }
@@ -44,7 +75,7 @@ void Application::warn(std::string_view warning,
                        const std::string& extra)
 {
     if (fatal_warnings_) {
-        throw FatalError(method, extra);
+        throw FatalError("method, extra);
     } else if (suppress_warnings_) {
         return;
     }

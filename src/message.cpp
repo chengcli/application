@@ -9,9 +9,6 @@
 //! Mutex for input directory access
 static std::mutex dir_mutex;
 
-//! Mutex for creating singletons within the application object
-static std::mutex app_mutex;
-
 Message::Message()
 {
     // install a default Monitor that writes log/error messages

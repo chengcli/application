@@ -12,11 +12,33 @@ protected:
     Application();
 
 public:
+    class Logger {
+      public:
+        Logger(std::string name);
+        ~Logger();
+
+        Monitor* GetMonitor() {
+          return cur_monitor_.get();
+        }
+
+      protected:
+        std::weak_pointer<Monitor> cur_monitor_;
+    };
+
+    static std::string FatalError(std::string_view fmt) {
+        char buf[80];
+        return 
+    }
+
     //! Return a pointer to the one and only instance of class Application
     /*!
      * If the Application object has not yet been created, it is created
      */
     static Application* GetInstance();
+
+    static Monitor* GetMonitor(Logger const& log) {
+        return log.GetMonitor();
+    }
 
     //! Destructor for class deletes global data
     virtual ~Application() {}
@@ -24,29 +46,9 @@ public:
     //! Static function that destroys the application class's data
     static void Destroy();
 
-    void AddError(const std::string& r, const std::string& msg="") {
-        pMessenger->AddError(r, msg);
-    }
+    bool InitMonitorLog(std::string_view mod, std::string_view fname);
 
-    int GetErrorCount() {
-        return pMessenger->GetErrorCount();
-    }
-
-    void PopError() {
-        pMessenger->PopError();
-    }
-
-    std::string LastErrorMessage() {
-        return pMessenger->LastErrorMessage();
-    }
-
-    void GetErrors(std::ostream& f) {
-        pMessenger->GetErrors(f);
-    }
-
-    void LogErrors() {
-        getMonitor()->LogErrors();
-    }
+    bool SetMonitorErrFile(std::string_view mod, std::string_view fname);
 
     //!  Add a directory to the data file search path.
     /*!
@@ -223,7 +225,8 @@ private:
     //! Pointer to the single Application instance
     static Application* myapp_;
 
-    static ModuleMonitorMap all_monitors_;
+    //! Pointer to the single MonitorMap instance
+    static MonitorMap* mymonitor_;
 };
 
 #endif  // SRC_APPLICATION_H

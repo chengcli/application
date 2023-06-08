@@ -6,17 +6,32 @@ namespace Globals {
   int my_rank, nranks;
 }
 
+void func2() {
+  Application::Logger log("main");
+  auto app = Application::GetMonitor(log);
+
+  app->Log("First step");
+  app->Log("Second step");
+}
+
+void func1() {
+  Application::Logger log("main");
+  auto app = Application::GetMonitor(log);
+
+  app->Log("First step");
+  app->Log("Second step");
+
+  func2();
+}
+
 int main(int argc, char **argv) {
   // no MPI
   Globals::my_rank = 0;
   Globals::nranks = 0;
 
-  pdebug = std::make_unique<Debugger>(2);
+  auto app = Application::GetInstance();
+  app->InitMonitorLog("main", "main.out")
+  app->InitMonitorErr("main", "main.err")
 
-  pdebug->Enter("main");
-    pdebug->Enter("level1");
-      pdebug->Enter("level2");
-      pdebug->Leave();
-    pdebug->Leave();
-  pdebug->Leave();
+  func1();
 }
