@@ -3,7 +3,6 @@
 
 // C/C++
 #include <exception>
-#include <sstream>
 #include <string>
 
 //! Base class for exceptions

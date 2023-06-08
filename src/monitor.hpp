@@ -1,9 +1,14 @@
 #ifndef SRC_MONITOR_H
 #define SRC_MONITOR_H
 
+// C/C++
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <memory>
+#include <map>
+#include <vector>
 
 class Monitor 
 {
@@ -12,7 +17,7 @@ protected:
     
 public:
     explicit Monitor(std::string name):
-        module_name_(name)
+        name_(name)
     {}
 
     //! Destructor - empty
@@ -24,7 +29,7 @@ public:
      *
      * @param msg      String message to be written to cout
      */
-    virtual void Log(std::string_view msg, uint8_t code) const;
+    virtual void Log(std::string const& msg, int code);
 
     //! Write an error message to the error device
     /*!
@@ -32,7 +37,7 @@ public:
      *
      * @param msg      String message to be written to cout
      */
-    virtual void Error(std::string_view msg, uint8_t code) const;
+    virtual void Error(std::string const& msg, int code);
 
     //! Write a warning message to the log device
     /*!
@@ -40,7 +45,7 @@ public:
      * 
      * @param msg     String message to be written to cout
      */
-    virtual void Warn(std::string_view msg, uint8_t code) const;
+    virtual void Warn(std::string const& msg, int code);
 
     void Enter() {
         sections_.push_back(0);
@@ -53,24 +58,30 @@ public:
     }
 
     bool SetLogFile(std::string_view fname) {
-        log_device_ = make_unique<std::ofstream>(fname, std::ios::out);
+        log_device_ = std::make_unique<std::ofstream>(
+            fname, std::ios::out);
+
+        return true;
     }
 
     bool SetErrFile(std::string_view fname) {
-        err_device_ = make_unique<std::ofstream>(fname, std::ios::out);
+        err_device_ = std::make_unique<std::ofstream>(
+            fname, std::ios::out);
+
+        return true;
     }
 
 protected:
-    virtual void getTimeStamp() const;
+    virtual std::string getTimeStamp() const;
 
     virtual std::string getSectionID() const;
 
     void advance();
 
-    std::unique_pointer<std::ostream>  log_device_;
-    std::unique_pointer<std::ostream>  err_device_;
+    std::unique_ptr<std::ostream>  log_device_;
+    std::unique_ptr<std::ostream>  err_device_;
 
-    std::string module_name_;
+    std::string name_;
 
     std::vector<uint32_t> sections_;
 };
