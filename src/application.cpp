@@ -25,12 +25,13 @@ static std::mutex app_mutex;
 static std::mutex monitor_mutex;
 
 Application::Logger::Logger(std::string name) {
-    auto iter = Application::mymonitor_.find(name);
-    if (iter != Application::mymonitor_.end()) {
-      cur_monitor_ = iter->second.get();
-      cur_monitor_->Enter();
+    std::unique_lock<std::mutex> lock(monitor_mutex);  
+
+    if (Application::mymonitor_.count(name)) {
+        Application::mymonitor_[name]->Enter();
+        cur_monitor_ = Application::mymonitor_[name].get();
     } else {
-      throw NotFoundError(name);
+        throw NotFoundError(name);
     }
 }
 
@@ -71,13 +72,12 @@ void Application::Destroy()
 bool Application::InitMonitorLog(std::string const& mod,
     std::string_view fname)
 {
-    auto iter = mymonitor_.find(mod);
-    if (iter != mymonitor_.end()) {
-      iter->second->SetLogFile(fname);
+    if (mymonitor_.count(mod)) {
+        mymonitor_[mod]->SetLogFile(fname);
     } else {
-      //MonitorPtr monitor(new Monitor(mod));
-      //monitor->SetLogFile(fname);
-      mymonitor_.insert({mod, new Monitor(mod)});
+        auto monitor = std::make_unique<Monitor>(mod);
+        monitor->SetLogFile(fname);
+        mymonitor_.insert(std::make_pair(mod, std::move(monitor)));
     }
 
     return true;
@@ -250,3 +250,4 @@ std::string Application::GetDataDirectories(const std::string& sep) {
 //}
 
 Application* Application::myapp_ = nullptr;
+MonitorMap Application::mymonitor_ = {};

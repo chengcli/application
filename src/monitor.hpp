@@ -83,7 +83,7 @@ protected:
 
     std::string name_;
 
-    std::vector<uint32_t> sections_;
+    static std::vector<uint32_t> sections_;
 };
 
 using MonitorPtr = std::unique_ptr<Monitor>;
