@@ -38,6 +38,13 @@ message(STATUS "4. Set up project libraries")
 configure_file(${CMAKE_SOURCE_DIR}/configure.hpp.in configure.hpp @ONLY)
 add_subdirectory(src)
 
+set(APPLICATION_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+  CACHE PATH 
+  "application include directory")
+mark_as_advanced(APPLICATION_INCLUDE_DIR)
+
 ## 1. set up unit tests
 message(STATUS "5. Set up unit tests")
-#add_subdirectory(tests)
+if (${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
+  add_subdirectory(tests)
+endif()

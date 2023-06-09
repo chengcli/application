@@ -29,7 +29,7 @@ public:
      *
      * @param msg      String message to be written to cout
      */
-    virtual void Log(std::string const& msg, int code);
+    virtual void Log(std::string const& msg, int code = 0);
 
     //! Write an error message to the error device
     /*!
@@ -37,7 +37,7 @@ public:
      *
      * @param msg      String message to be written to cout
      */
-    virtual void Error(std::string const& msg, int code);
+    virtual void Error(std::string const& msg, int code = 0);
 
     //! Write a warning message to the log device
     /*!
@@ -45,31 +45,15 @@ public:
      * 
      * @param msg     String message to be written to cout
      */
-    virtual void Warn(std::string const& msg, int code);
+    virtual void Warn(std::string const& msg, int code = 0);
 
-    void Enter() {
-        sections_.push_back(0);
-        Log("begin",0);
-    }
+    void Enter();
 
-    void Leave() {
-        sections_.pop_back();
-        Log("end",0);
-    }
+    void Leave();
 
-    bool SetLogFile(std::string_view fname) {
-        log_device_ = std::make_unique<std::ofstream>(
-            fname, std::ios::out);
+    bool SetLogOutput(std::string const& fname);
 
-        return true;
-    }
-
-    bool SetErrFile(std::string_view fname) {
-        err_device_ = std::make_unique<std::ofstream>(
-            fname, std::ios::out);
-
-        return true;
-    }
+    bool SetErrOutput(std::string const& fname);
 
 protected:
     virtual std::string getTimeStamp() const;
@@ -78,8 +62,8 @@ protected:
 
     void advance();
 
-    std::unique_ptr<std::ostream>  log_device_;
-    std::unique_ptr<std::ostream>  err_device_;
+    std::shared_ptr<std::ostream>  log_device_;
+    std::shared_ptr<std::ostream>  err_device_;
 
     std::string name_;
 
@@ -89,5 +73,9 @@ protected:
 using MonitorPtr = std::unique_ptr<Monitor>;
 
 using MonitorMap = std::map<std::string, MonitorPtr>;
+
+using DevicePtr = std::shared_ptr<std::ostream>;
+
+using DeviceMap = std::map<std::string, DevicePtr>;
 
 #endif  // SRC_MONITOR_HPP_

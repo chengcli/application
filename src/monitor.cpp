@@ -1,5 +1,8 @@
 // application
 #include "monitor.hpp"
+#include "application.hpp"
+
+static std::mutex section_mutex;
 
 void Monitor::Log(std::string const& msg, int code) {
     advance();
@@ -37,6 +40,48 @@ void Monitor::Warn(std::string const& msg, int code) {
     (*log_device_) << buf;
 }
 
+void Monitor::Enter() {
+    std::unique_lock<std::mutex> lock(section_mutex);  
+
+    sections_.push_back(0);
+    Log("begin",0);
+}
+
+void Monitor::Leave() {
+    std::unique_lock<std::mutex> lock(section_mutex);  
+
+    sections_.pop_back();
+    Log("end",0);
+}
+
+bool Monitor::SetLogOutput(std::string const& fname) {
+    auto app = Application::GetInstance();
+
+    if (app->HasDevice(fname)) {
+      log_device_ = app->GetDevice(fname);
+    } else {
+      log_device_ = std::make_shared<std::ofstream>(
+          fname, std::ios::out);
+      app->InstallDevice(fname, log_device_);
+    }
+
+    return true;
+}
+
+bool Monitor::SetErrOutput(std::string const& fname) {
+    auto app = Application::GetInstance();
+
+    if (app->HasDevice(fname)) {
+      err_device_ = app->GetDevice(fname);
+    } else {
+      err_device_ = std::make_shared<std::ofstream>(
+          fname, std::ios::out);
+      app->InstallDevice(fname, err_device_);
+    }
+
+    return true;
+}
+
 std::string Monitor::getTimeStamp() const {
   return "XXX";
 }
@@ -60,3 +105,5 @@ void Monitor::advance() {
       sections_.push_back(1);
     }
 }
+
+std::vector<uint32_t> Monitor::sections_ = {};

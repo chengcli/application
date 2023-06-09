@@ -64,19 +64,41 @@ void Application::Destroy()
     std::unique_lock<std::mutex> lock2(monitor_mutex);
 
     if (Application::myapp_ != nullptr) {
+        std::cout << "application gone" << std::endl;
         delete Application::myapp_;
         Application::myapp_ = nullptr;
     }
+
+    Application::mymonitor_.clear();
 }
 
 bool Application::InitMonitorLog(std::string const& mod,
-    std::string_view fname)
+    std::string const& fname)
 {
+    std::unique_lock<std::mutex> lock(monitor_mutex);
+
     if (mymonitor_.count(mod)) {
-        mymonitor_[mod]->SetLogFile(fname);
+        mymonitor_[mod]->SetLogOutput(fname);
     } else {
         auto monitor = std::make_unique<Monitor>(mod);
-        monitor->SetLogFile(fname);
+        monitor->SetLogOutput(fname);
+        mymonitor_.insert(std::make_pair(mod, std::move(monitor)));
+        mymonitor_[mod]->Log("Start");
+    }
+
+    return true;
+}
+
+bool Application::InitMonitorErr(std::string const& mod,
+    std::string const& fname)
+{
+    std::unique_lock<std::mutex> lock(monitor_mutex);
+
+    if (mymonitor_.count(mod)) {
+        mymonitor_[mod]->SetErrOutput(fname);
+    } else {
+        auto monitor = std::make_unique<Monitor>(mod);
+        monitor->SetErrOutput(fname);
         mymonitor_.insert(std::make_pair(mod, std::move(monitor)));
     }
 

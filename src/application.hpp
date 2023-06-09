@@ -52,9 +52,13 @@ public:
     //! Static function that destroys the application class's data
     static void Destroy();
 
-    bool InitMonitorLog(std::string const& mod, std::string_view fname);
+    bool InitMonitorLog(std::string const& mod, std::string const& fname);
 
-    bool InitMonitorErr(std::string const& mod, std::string_view fname);
+    bool InitMonitorErr(std::string const& mod, std::string const& fname);
+
+    size_t CountMonitors() {
+        return mymonitor_.size();
+    }
 
     //!  Add a directory to the data file search path.
     /*!
@@ -142,6 +146,18 @@ public:
         fatal_warnings_ = true;
     }
 
+    bool HasDevice(std::string const& name) {
+        return mydevice_.count(name) > 0;
+    }
+
+    DevicePtr GetDevice(std::string const& name) {
+        return mydevice_[name];
+    }
+
+    void InstallDevice(std::string const& name, DevicePtr device) {
+        mydevice_.insert({name, device});
+    }
+
 protected:
     //! Set the default directories for input files.
     /*!
@@ -186,6 +202,8 @@ private:
     static Application* myapp_;
 
     static MonitorMap mymonitor_;
+
+    DeviceMap mydevice_;
 };
 
 #endif  // SRC_APPLICATION_H
