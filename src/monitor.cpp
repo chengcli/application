@@ -7,7 +7,7 @@ static std::mutex section_mutex;
 void Monitor::Log(std::string const& msg, int code) {
     advance();
     char buf[80];
-    snprintf(buf, sizeof(buf), "Log; %s; %s.%s; %s; %d\n", 
+    snprintf(buf, sizeof(buf), "Log, %s, %s, %s, \"%s\", %d\n", 
         getTimeStamp().c_str(),
         name_.c_str(),
         getSectionID().c_str(),
@@ -19,7 +19,7 @@ void Monitor::Log(std::string const& msg, int code) {
 void Monitor::Error(std::string const& msg, int code) {
     advance();
     char buf[80];
-    snprintf(buf, sizeof(buf), "Error; %s; %s.%s; %s; %d\n", 
+    snprintf(buf, sizeof(buf), "Error; %s, %s, %s, \"%s\", %d\n", 
         getTimeStamp().c_str(),
         name_.c_str(),
         getSectionID().c_str(),
@@ -31,7 +31,7 @@ void Monitor::Error(std::string const& msg, int code) {
 void Monitor::Warn(std::string const& msg, int code) {
     advance();
     char buf[80];
-    snprintf(buf, sizeof(buf), "Error; %s; %s.%s; %s; %d\n", 
+    snprintf(buf, sizeof(buf), "Warn, %s, %s, %s, \"%s\", %d\n", 
         getTimeStamp().c_str(),
         name_.c_str(),
         getSectionID().c_str(),
@@ -44,14 +44,12 @@ void Monitor::Enter() {
     std::unique_lock<std::mutex> lock(section_mutex);  
 
     sections_.push_back(0);
-    Log("begin",0);
 }
 
 void Monitor::Leave() {
     std::unique_lock<std::mutex> lock(section_mutex);  
 
     sections_.pop_back();
-    Log("end",0);
 }
 
 bool Monitor::SetLogOutput(std::string const& fname) {

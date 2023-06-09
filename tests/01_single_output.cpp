@@ -7,16 +7,14 @@ namespace Globals {
 }
 
 void func2() {
-  Application::Logger log("B");
-  auto app = Application::GetMonitor(log);
+  Application::Logger app("B");
 
   app->Log("First step");
   app->Log("Second step");
 }
 
 void func1() {
-  Application::Logger log("A");
-  auto app = Application::GetMonitor(log);
+  Application::Logger app("A");
 
   app->Log("First step");
   app->Log("Second step");
@@ -30,14 +28,10 @@ int main(int argc, char **argv) {
   Globals::nranks = 0;
 
   auto app = Application::GetInstance();
-  app->InitMonitorLog("main", "main.out");
-  app->InitMonitorErr("main", "main.err");
 
-  app->InitMonitorLog("A", "main.out");
-  app->InitMonitorErr("A", "main.err");
-
-  app->InitMonitorLog("B", "main.out");
-  app->InitMonitorErr("B", "main.err");
+  app->InstallMonitor("main", "main.out", "main.err");
+  app->InstallMonitor("A", "main.out", "main.err");
+  app->InstallMonitor("B", "main.out", "main.err");
 
   std::cout << app->CountMonitors() << std::endl;
 

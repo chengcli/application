@@ -22,14 +22,13 @@ std::string stripnonprint(const std::string& s)
 //! Mutex for creating singletons within the application object
 static std::mutex dir_mutex;
 static std::mutex app_mutex;
-static std::mutex monitor_mutex;
 
 Application::Logger::Logger(std::string name) {
-    std::unique_lock<std::mutex> lock(monitor_mutex);  
+    auto app = Application::GetInstance();
 
-    if (Application::mymonitor_.count(name)) {
-        Application::mymonitor_[name]->Enter();
-        cur_monitor_ = Application::mymonitor_[name].get();
+    if (app->HasMonitor(name)) {
+        cur_monitor_ = app->GetMonitor(name);
+        cur_monitor_->Enter();
     } else {
         throw NotFoundError(name);
     }
@@ -60,45 +59,24 @@ Application* Application::GetInstance()
 
 void Application::Destroy()
 {
-    std::unique_lock<std::mutex> lock1(app_mutex);
-    std::unique_lock<std::mutex> lock2(monitor_mutex);
+    std::unique_lock<std::mutex> lock(app_mutex);
 
     if (Application::myapp_ != nullptr) {
-        std::cout << "application gone" << std::endl;
         delete Application::myapp_;
         Application::myapp_ = nullptr;
     }
-
-    Application::mymonitor_.clear();
 }
 
-bool Application::InitMonitorLog(std::string const& mod,
-    std::string const& fname)
+bool Application::InstallMonitor(std::string const& mod,
+    std::string const& log_name, std::string const& err_name)
 {
-    std::unique_lock<std::mutex> lock(monitor_mutex);
-
     if (mymonitor_.count(mod)) {
-        mymonitor_[mod]->SetLogOutput(fname);
+        mymonitor_[mod]->SetLogOutput(log_name);
+        mymonitor_[mod]->SetErrOutput(err_name);
     } else {
         auto monitor = std::make_unique<Monitor>(mod);
-        monitor->SetLogOutput(fname);
-        mymonitor_.insert(std::make_pair(mod, std::move(monitor)));
-        mymonitor_[mod]->Log("Start");
-    }
-
-    return true;
-}
-
-bool Application::InitMonitorErr(std::string const& mod,
-    std::string const& fname)
-{
-    std::unique_lock<std::mutex> lock(monitor_mutex);
-
-    if (mymonitor_.count(mod)) {
-        mymonitor_[mod]->SetErrOutput(fname);
-    } else {
-        auto monitor = std::make_unique<Monitor>(mod);
-        monitor->SetErrOutput(fname);
+        monitor->SetLogOutput(log_name);
+        monitor->SetErrOutput(err_name);
         mymonitor_.insert(std::make_pair(mod, std::move(monitor)));
     }
 
@@ -272,4 +250,4 @@ std::string Application::GetDataDirectories(const std::string& sep) {
 //}
 
 Application* Application::myapp_ = nullptr;
-MonitorMap Application::mymonitor_ = {};
+//MonitorMap Application::mymonitor_ = {};

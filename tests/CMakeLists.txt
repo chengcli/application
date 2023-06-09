@@ -3,21 +3,23 @@
 string(TOLOWER ${CMAKE_BUILD_TYPE} buildl)
 string(TOUPPER ${CMAKE_BUILD_TYPE} buildu)
 
-# 1. Compile 01_enter_leave.cpp
+file(GLOB src_files *.cpp)
 
-add_executable(01_enter_leave.${buildl} 01_enter_leave.cpp)
+foreach(test ${src_files})
+    get_filename_component(name ${test} NAME_WE)
+    add_executable(${name}.${buildl} ${name}.cpp)
+    set_target_properties(
+      ${name}.${buildl}
+      PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+                 COMPILE_FLAGS ${CMAKE_CXX_FLAGS_${buildu}})
 
-set_target_properties(
-  01_enter_leave.${buildl}
-  PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-             COMPILE_FLAGS ${CMAKE_CXX_FLAGS_${buildu}})
+    target_include_directories(
+      ${name}.${buildl}
+      PRIVATE
+      ${APPLICATION_INCLUDE_DIR}
+      )
 
-target_include_directories(
-  01_enter_leave.${buildl}
-  PRIVATE
-  ${APPLICATION_INCLUDE_DIR}
-  )
-
-target_link_libraries(01_enter_leave.${buildl}
-  application_${buildl}
-  )
+    target_link_libraries(${name}.${buildl}
+      application_${buildl}
+      )
+endforeach()

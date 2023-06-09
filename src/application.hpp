@@ -28,7 +28,11 @@ public:
         Logger(std::string name);
         ~Logger();
 
-        Monitor* GetMonitor() const {
+        //! Provide a pointer dereferencing overloaded operator
+        /*!
+         * @returns a pointer to Monitor
+         */
+        Monitor* operator->() {
           return cur_monitor_;
         }
 
@@ -42,23 +46,26 @@ public:
      */
     static Application* GetInstance();
 
-    static Monitor* GetMonitor(Logger const& log) {
-        return log.GetMonitor();
+    size_t CountMonitors() {
+        return mymonitor_.size();
     }
+
+    bool HasMonitor(std::string const& name) {
+        return mymonitor_.count(name) > 0;
+    }
+
+    Monitor* GetMonitor(std::string const& name) {
+        return mymonitor_[name].get();
+    }
+
+    bool InstallMonitor(std::string const& name,
+        std::string const& log_name, std::string const& err_name);
 
     //! Destructor for class deletes global data
     virtual ~Application() {}
 
     //! Static function that destroys the application class's data
     static void Destroy();
-
-    bool InitMonitorLog(std::string const& mod, std::string const& fname);
-
-    bool InitMonitorErr(std::string const& mod, std::string const& fname);
-
-    size_t CountMonitors() {
-        return mymonitor_.size();
-    }
 
     //!  Add a directory to the data file search path.
     /*!
@@ -158,6 +165,7 @@ public:
         mydevice_.insert({name, device});
     }
 
+
 protected:
     //! Set the default directories for input files.
     /*!
@@ -197,13 +205,12 @@ protected:
     bool suppress_warnings_ = false;
     bool fatal_warnings_ = false;
 
+    MonitorMap mymonitor_;
+    DeviceMap mydevice_;
+
 private:
     //! Pointer to the single Application instance
     static Application* myapp_;
-
-    static MonitorMap mymonitor_;
-
-    DeviceMap mydevice_;
 };
 
 #endif  // SRC_APPLICATION_H
