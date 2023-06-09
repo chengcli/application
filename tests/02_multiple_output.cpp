@@ -1,11 +1,6 @@
 // application 
 #include <application/application.hpp>
 
-// define global variables
-namespace Globals {
-  int my_rank, nranks;
-}
-
 void func2() {
   Application::Logger app("B");
 
@@ -23,10 +18,6 @@ void func1() {
 }
 
 int main(int argc, char **argv) {
-  // no MPI
-  Globals::my_rank = 0;
-  Globals::nranks = 0;
-
   auto app = Application::GetInstance();
 
   app->InstallMonitor("main", "main.out", "main.err");
