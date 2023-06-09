@@ -7,7 +7,7 @@
 
 //! Base class for exceptions
 /*!
- * This class is the base class for exceptions thrown by Cantera. It inherits
+ * This class is the base class for exceptions. It inherits
  * from std::exception so that normal error handling operations from
  * applications may automatically handle the errors in their own way.
  *
@@ -57,7 +57,7 @@ private:
 
 //! Array size error.
 /*!
- * This error is thrown if a supplied length to a vector supplied to Cantera is
+ * This error is thrown if a supplied length to a vector is
  * too small.
  *
  * @ingroup errorhandling
@@ -72,8 +72,8 @@ public:
      *
      * @param procedure String name for the function within which the error was
      *             generated.
-     * @param sz   This is the length supplied to Cantera.
-     * @param reqd This is the required length needed by Cantera
+     * @param sz   This is the length supplied
+     * @param reqd This is the required length needed 
      */
     ArraySizeError(const std::string& procedure, size_t sz, size_t reqd) :
         ExceptionBase(procedure), sz_(sz), reqd_(reqd) {}

@@ -92,16 +92,16 @@ public:
      * @param name Name of the input file to be searched for
      * @return  The absolute path name of the first matching file
      *
-     * If the file is not found a CanteraError exception is thrown.
+     * If the file is not found an exception is thrown.
      *
      * @ingroup inputfiles
      */
     std::string FindInputFile(const std::string& name);
 
-    //! Get the Cantera data directories
+    //! Get the data directories
     /*!
      * This routine returns a string including the names of all the
-     * directories searched by Cantera for data files.
+     * directories searched for data files.
      *
      * @param sep Separator to use between directories in the string
      * @return A string of directories separated by the input sep
@@ -113,7 +113,6 @@ public:
     //! Set the versions of Python to try when loading user-defined extensions,
     //! in order of preference. Separate multiple versions with commas, for example
     //! `"3.11,3.10"`.
-    //! @since New in Cantera 3.0
     void SearchPythonVersions(const std::string& versions);
 
     //! Print a warning indicating that *method* is deprecated. Additional
@@ -147,7 +146,7 @@ public:
         return suppress_warnings_;
     }
 
-    //! Turns Cantera warnings into exceptions. Activated within the test
+    //! Turns warnings into exceptions. Activated within the test
     //! suite to make sure that your warning message are being raised.
     void MakeWarningsFatal() {
         fatal_warnings_ = true;
@@ -169,27 +168,15 @@ public:
 protected:
     //! Set the default directories for input files.
     /*!
-     * %Cantera searches for input files along a path that includes platform-
+     * Searches for input files along a path that includes platform-
      * specific default locations, and possibly user-specified locations.
      * This function installs the platform-specific directories on the search
      * path. It is invoked at startup by appinit(), and never should need to
      * be called by user programs.
      *
-     * The current directory (".") is always searched first. Then, on Windows, the
-     * registry is checked to find the Cantera installation directory, and the
-     * 'data' subdirectory of the installation directory will be added to the search
-     * path.
+     * The current directory (".") is always searched first. 
      *
-     * On any platform, if environment variable CANTERA_DATA is set to a directory
-     * name or a list of directory names separated with the OS-dependent path
-     * separator (that is, ";" on Windows, ":" elsewhere), then these directories will
-     * be added to the search path.
-     *
-     * Finally, the location where the data files were installed when
-     * %Cantera was built is added to the search path.
-     *
-     * Additional directories may be added by calling function addDirectory.
-     * @ingroup inputfiles
+     * Additional directories may be added by calling function AddDirectory.
      */
     void setDefaultDirectories();
 

@@ -4,6 +4,8 @@
 #include <string>
 
 // application
+#include <configure.hpp>
+
 #include "application.hpp"
 #include "exceptions.hpp"
 #include "monitor.hpp"
@@ -88,58 +90,21 @@ void Application::setDefaultDirectories()
     // always look in the local directory first
     input_dirs_.push_back(".");
 
-    // if environment variable CANTERA_DATA is defined, then add it to the
-    // search path. CANTERA_DATA may include multiple directory, separated by
-    // the OS-dependent path separator (in the same manner as the PATH
-    // environment variable).
-#ifdef _WIN32
+#ifdef WINDOWS
     std::string pathsep = ";";
 #else
     std::string pathsep = ":";
 #endif
 
-    if (getenv("CANTERA_DATA") != 0) {
-        std::string s = std::string(getenv("CANTERA_DATA"));
-        size_t start = 0;
-        size_t end = s.find(pathsep);
-        while (end != std::string::npos) {
-            input_dirs_.push_back(s.substr(start, end-start));
-            start = end + 1;
-            end = s.find(pathsep, start);
-        }
-        input_dirs_.push_back(s.substr(start,end));
+    std::string s = std::string(Global::search_paths);
+    size_t start = 0;
+    size_t end = s.find(pathsep);
+    while (end != std::string::npos) {
+        input_dirs_.push_back(s.substr(start, end-start));
+        start = end + 1;
+        end = s.find(pathsep, start);
     }
-
-#ifdef _WIN32
-    // Under Windows, the Cantera setup utility records the installation
-    // directory in the registry. Data files are stored in the 'data'
-    // subdirectory of the main installation directory.
-    std::string installDir;
-    readStringRegistryKey("SOFTWARE\\Cantera\\Cantera " CANTERA_SHORT_VERSION,
-                          "InstallDir", installDir, "");
-    if (installDir != "") {
-        input_dirs_.push_back(installDir + "data");
-
-        // Scripts for converting mechanisms to YAML are installed in
-        // the 'bin' subdirectory. Add that directory to the PYTHONPATH.
-        const char* old_pythonpath = getenv("PYTHONPATH");
-        std::string pythonpath = "PYTHONPATH=" + installDir + "\\bin";
-        if (old_pythonpath) {
-            pythonpath += ";";
-            pythonpath.append(old_pythonpath);
-        }
-        _putenv(pythonpath.c_str());
-    }
-
-#endif
-
-    // CANTERA_DATA is defined in file config.h. This file is written during the
-    // build process (unix), and points to the directory specified by the
-    // 'prefix' option to 'configure', or else to /usr/local/cantera.
-#ifdef CANTERA_DATA
-    std::string datadir = stripnonprint(std::string(CANTERA_DATA));
-    input_dirs_.push_back(datadir);
-#endif
+    input_dirs_.push_back(s.substr(start,end));
 }
 
 void Application::AddDataDirectory(const std::string& dir)
@@ -208,7 +173,7 @@ std::string Application::FindInputFile(const std::string& name)
         }
     }
 
-    // Search the Cantera data directories for the input file, and return
+    // Search the data directories for the input file, and return
     // the full path if a match is found
     size_t nd = dirs.size();
     for (size_t i = 0; i < nd; i++) {
@@ -229,8 +194,7 @@ std::string Application::FindInputFile(const std::string& name)
     msg += "\n\n";
     msg += "To fix this problem, either:\n";
     msg += "    a) move the missing files into the local directory;\n";
-    msg += "    b) define environment variable CANTERA_DATA to\n";
-    msg += "         point to the directory containing the file.";
+    msg += "    b) define -DMYPATH= during build\n";
     throw NotFoundError(msg);
 }
 
