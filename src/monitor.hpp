@@ -1,5 +1,5 @@
-#ifndef SRC_MONITOR_H
-#define SRC_MONITOR_H
+#ifndef SRC_MONITOR_HPP_
+#define SRC_MONITOR_HPP_
 
 // C/C++
 #include <fstream>
@@ -90,4 +90,4 @@ using MonitorPtr = std::unique_ptr<Monitor>;
 
 using MonitorMap = std::map<std::string, MonitorPtr>;
 
-#endif  // SRC_MONITOR_H
+#endif  // SRC_MONITOR_HPP_

@@ -8,6 +8,7 @@ string(TOUPPER ${namel} nameu)
 file(GLOB src_files
   exceptions.cpp
   monitor.cpp
+  application.cpp
   )
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} buildl)

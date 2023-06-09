@@ -1,8 +1,19 @@
 #ifndef SRC_APPLICATION_HPP_
 #define SRC_APPLICATION_HPP_
 
-#include "cantera/base/config.h"
-#include "cantera/base/logger.h"
+// C/C++
+#include <memory>
+#include <string>
+
+// application
+#include "monitor.hpp"
+
+//! Strip non-printing characters wherever they are
+/*!
+ * @param s        Input string
+ * @returns a copy of the string, stripped of all non- printing characters.
+ */
+std::string stripnonprint(const std::string& s);
 
 class Application
 {
@@ -17,18 +28,13 @@ public:
         Logger(std::string name);
         ~Logger();
 
-        Monitor* GetMonitor() {
-          return cur_monitor_.get();
+        Monitor* GetMonitor() const {
+          return cur_monitor_;
         }
 
       protected:
-        std::weak_pointer<Monitor> cur_monitor_;
+        Monitor* cur_monitor_;
     };
-
-    static std::string FatalError(std::string_view fmt) {
-        char buf[80];
-        return 
-    }
 
     //! Return a pointer to the one and only instance of class Application
     /*!
@@ -46,9 +52,9 @@ public:
     //! Static function that destroys the application class's data
     static void Destroy();
 
-    bool InitMonitorLog(std::string_view mod, std::string_view fname);
+    bool InitMonitorLog(std::string const& mod, std::string_view fname);
 
-    bool SetMonitorErrFile(std::string_view mod, std::string_view fname);
+    bool InitMonitorErr(std::string const& mod, std::string_view fname);
 
     //!  Add a directory to the data file search path.
     /*!
@@ -91,30 +97,13 @@ public:
      *
      * @ingroup inputfiles
      */
-    std::string GetDataDirectories(const std::string& sep) {
-      std::stringstream ss;
-      for (size_t i = 0; i < inputDirs.size(); ++i) {
-        if (i != 0) {
-          ss << sep;
-        }
-        ss << inputDirs[i];
-      }
-      return ss.str();
-    }
+    std::string GetDataDirectories(const std::string& sep);
 
     //! Set the versions of Python to try when loading user-defined extensions,
     //! in order of preference. Separate multiple versions with commas, for example
     //! `"3.11,3.10"`.
     //! @since New in Cantera 3.0
-    void SearchPythonVersions(const string& versions);
-
-    void WriteLog(const std::string& msg) {
-        pMessenger->WriteLog(msg);
-    }
-
-    void WarnLog(const std::string& warning, const std::string& msg) {
-        pMessenger->WarnLog(warning, msg);
-    }
+    void SearchPythonVersions(const std::string& versions);
 
     //! Print a warning indicating that *method* is deprecated. Additional
     //! information (removal version, alternatives) can be specified in
@@ -135,13 +124,6 @@ public:
         fatal_deprecation_warnings_ = true;
     }
 
-    //! Generate a general purpose warning; repeated warnings are not suppressed
-    //! @param warning  Warning type; see Logger::warn()
-    //! @param method  Name of method triggering the warning
-    //! @param extra  Additional information printed for the warning
-    void Warn(std::string_view warning,
-              std::string_view method, const std::string& extra="");
-
     //! Globally disable printing of (user) warnings. Used primarily to
     //! prevent certain tests from failing.
     void SuppressWarnings() {
@@ -159,21 +141,6 @@ public:
     void MakeWarningsFatal() {
         fatal_warnings_ = true;
     }
-
-    //! @copydoc Messages::setLogger
-    template<typename LogDevice, typename ErrDevice>
-    void SetMonitor(Monitor<LogDevice, ErrDevice>* monitor) {
-        pMessenger->SetMonitor(monitor);
-    }
-
-    //! Delete and free memory allocated per thread in multithreaded applications
-    /*!
-     * Delete the memory allocated per thread by Cantera.  It should be called
-     * from within the thread just before the thread terminates.  If your
-     * version of Cantera has not been specifically compiled for thread safety
-     * this function does nothing.
-     */
-    void ThreadComplete();
 
 protected:
     //! Set the default directories for input files.
@@ -200,33 +167,25 @@ protected:
      * Additional directories may be added by calling function addDirectory.
      * @ingroup inputfiles
      */
-    void SetDefaultDirectories();
+    void setDefaultDirectories();
 
     //! Current vector of input directories to search for input files
-    std::vector<std::string> inputDirs;
+    std::vector<std::string> input_dirs_;
 
     //! Versions of Python to consider when attempting to load user extensions
-    vector<string> python_versions_ = {"3.11", "3.10", "3.9", "3.8"};
-
-    //! Vector of deprecation warnings that have been emitted (to suppress
-    //! duplicates)
-    std::set<std::string> warnings_;
+    std::vector<std::string> python_versions_ = {
+      "3.11", "3.10", "3.9", "3.8"};
 
     bool suppress_deprecation_warnings_ = false;
     bool fatal_deprecation_warnings_ = false;
     bool suppress_warnings_ = false;
     bool fatal_warnings_ = false;
 
-    std::set<std::pair<std::string, std::string>> loaded_extensions_;
-
-    ThreadMessage pMessenger_;
-
 private:
     //! Pointer to the single Application instance
     static Application* myapp_;
 
-    //! Pointer to the single MonitorMap instance
-    static MonitorMap* mymonitor_;
+    static MonitorMap mymonitor_;
 };
 
 #endif  // SRC_APPLICATION_H
