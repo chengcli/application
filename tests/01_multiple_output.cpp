@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
   app->InstallMonitor("A", "A.out", "A.err");
   app->InstallMonitor("B", "B.out", "B.err");
 
-  std::cout << app->CountMonitors() << std::endl;
+  std::cout << "Number of monitors = " << app->CountMonitors() << std::endl;
 
   func1();
 

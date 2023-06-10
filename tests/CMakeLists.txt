@@ -3,6 +3,9 @@
 string(TOLOWER ${CMAKE_BUILD_TYPE} buildl)
 string(TOUPPER ${CMAKE_BUILD_TYPE} buildu)
 
+# Enable testing functionality
+enable_testing()
+
 file(GLOB src_files *.cpp)
 
 foreach(test ${src_files})
@@ -17,4 +20,5 @@ foreach(test ${src_files})
                              PRIVATE ${APPLICATION_INCLUDE_DIR})
 
   target_link_libraries(${name}.${buildl} application_${buildl})
+  add_test(NAME ${name}.${buildl} COMMAND ${name}.${buildl})
 endforeach()
