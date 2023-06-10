@@ -4,6 +4,7 @@
 // C/C++
 #include <memory>
 #include <string>
+#include <vector>
 
 // application
 #include "monitor.hpp"
@@ -24,7 +25,7 @@ class Application {
  public:
   class Logger {
    public:
-    Logger(std::string name);
+    explicit Logger(std::string name);
     ~Logger();
 
     //! Provide a pointer dereferencing overloaded operator
@@ -184,4 +185,4 @@ class Application {
   static Application* myapp_;
 };
 
-#endif  // SRC_APPLICATION_H
+#endif  // SRC_APPLICATION_HPP_

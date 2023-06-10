@@ -8,14 +8,16 @@ repos:
       - id: trailing-whitespace
         name: Trim Trailing Whitespace
         entry: trailing-whitespace-fixer
-        language: python
-        exclude: ^(src/.*|tests/.*)$
+        language:
+          python
+          #exclude: ^(src/.*|tests/.*)$
 
       - id: end-of-file-fixer
         name: Fix End of Files
         entry: mixed-line-ending
-        language: python
-        exclude: ^(src/.*|tests/.*)$
+        language:
+          python
+          #exclude: ^(src/.*|tests/.*)$
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.0.0-alpha.0
@@ -25,8 +27,9 @@ repos:
         description: "Checks JavaScript/TypeScript/Flow/JSX/JSON/CSS/SCSS/
           Less/HTML/Vue/Angular/GraphQL/Markdown/YAML"
         entry: prettier --write --list-different --ignore-unknown
-        language: node
-        exclude: ^(src/.*|tests/.*)$
+        language:
+          node
+          #exclude: ^(src/.*|tests/.*)$
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4
@@ -34,8 +37,9 @@ repos:
       - id: codespell
         name: Check Misspellings
         language: python
-        description: It looks for a set of common misspellings
-        exclude: ^(src/.*|tests/.*)$
+        description:
+          It looks for a set of common misspellings
+          #exclude: ^(src/.*|tests/.*)$
 
   ## 2. Per language check ===================================================
 
@@ -94,8 +98,9 @@ repos:
         description: Formats C, C++, Objective-C, and Java code
         types_or: [c, c++, c#, objective-c, java]
         language: python
-        args: [--style=Google, -i, --no-diff]
-        exclude: ^(src/.*|tests/.*)$
+        args:
+          [--style=Google, -i, --no-diff]
+          #exclude: ^(src/.*|tests/.*)$
 
       - id: cppcheck
         name: Find warnings/errors in C, C++, and Objective-C
@@ -103,8 +108,9 @@ repos:
         description: Find warnings/errors in C, C++, and Objective-C code
         types_or: [c, c++, c#, objective-c]
         language: python
-        args: [--check-config]
-        exclude: ^(src/.*|tests/.*)$
+        args:
+          [--check-config]
+          #exclude: ^(src/.*|tests/.*)$
 
   - repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: v0.6.10
@@ -126,13 +132,14 @@ repos:
         description: Find warnings/errors in C/CPP code
         types_or: [c, c++, c#, objective-c, cuda]
         language: python
-        args: [
+        args:
+          [
             "--filter=-legal/copyright,
             -build/include_subdir,
             -runtime/references,
             -build/include_order",
           ]
-        exclude: ^(src/.*|tests/.*)$
+          #exclude: ^(src/.*|tests/.*)$
 
   - repo: local
     hooks:

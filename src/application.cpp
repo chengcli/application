@@ -3,6 +3,8 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 // application
 #include <configure.hpp>
@@ -166,8 +168,8 @@ std::string Application::FindInputFile(const std::string& name) {
 
   // Search the data directories for the input file, and return
   // the full path if a match is found
-  size_t nd = dirs.size();
-  for (size_t i = 0; i < nd; i++) {
+  size_t nd_ = dirs.size();
+  for (size_t i = 0; i < nd_; i++) {
     std::string full_name = dirs[i] + "/" + name;
     std::ifstream fin(full_name);
     if (fin) {
@@ -175,10 +177,10 @@ std::string Application::FindInputFile(const std::string& name) {
     }
   }
   std::string msg = "\nInput file " + name + " not found in director";
-  msg += (nd == 1 ? "y " : "ies ");
-  for (size_t i = 0; i < nd; i++) {
+  msg += (nd_ == 1 ? "y " : "ies ");
+  for (size_t i = 0; i < nd_; i++) {
     msg += "\n'" + dirs[i] + "'";
-    if (i + 1 < nd) {
+    if (i + 1 < nd_) {
       msg += ", ";
     }
   }
