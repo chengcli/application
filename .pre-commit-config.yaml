@@ -136,6 +136,7 @@ repos:
           [
             "--filter=-legal/copyright,
             -build/include_subdir,
+            -build/c++11,
             -runtime/references,
             -build/include_order",
           ]

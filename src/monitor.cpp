@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <mutex>
 
 // application
 #include "application.hpp"
