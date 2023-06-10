@@ -1,4 +1,6 @@
 // C/C++
+#include <fstream>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <sstream>
@@ -76,7 +78,7 @@ bool Application::InstallMonitor(std::string const& mod,
     auto monitor = std::make_unique<Monitor>(mod);
     monitor->SetLogOutput(log_name);
     monitor->SetErrOutput(err_name);
-    mymonitor_.insert(std::make_pair(mod, std::move(monitor)));
+    mymonitor_.insert({mod, std::move(monitor)});
   }
 
   return true;
