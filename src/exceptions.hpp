@@ -13,47 +13,43 @@
  *
  * @ingroup errorhandling
  */
-class ExceptionBase: public std::exception
-{
-public:
-    //! Normal Constructor for the ExceptionBase class
-    ExceptionBase(const std::string& procedure, const std::string& msg)
-        : procedure_(procedure), msg_(msg)
-    {}
+class ExceptionBase : public std::exception {
+ public:
+  //! Normal Constructor for the ExceptionBase class
+  ExceptionBase(const std::string& procedure, const std::string& msg)
+      : procedure_(procedure), msg_(msg) {}
 
-    //! Destructor for base class does nothing
-    virtual ~ExceptionBase() throw() {};
+  //! Destructor for base class does nothing
+  virtual ~ExceptionBase() throw(){};
 
-    //! Get a description of the error
-    const char* what() const throw();
+  //! Get a description of the error
+  const char* what() const throw();
 
-    //! Method overridden by derived classes to format the error message
-    virtual std::string GetMessage() const;
+  //! Method overridden by derived classes to format the error message
+  virtual std::string GetMessage() const;
 
-    //! Get the name of the method that threw the exception
-    virtual std::string GetMethod() const;
+  //! Get the name of the method that threw the exception
+  virtual std::string GetMethod() const;
 
-    //! Method overridden by derived classes to indicate their type
-    virtual std::string GetClass() const {
-        return "Exception!";
-    }
+  //! Method overridden by derived classes to indicate their type
+  virtual std::string GetClass() const { return "Exception!"; }
 
-protected:
-    //! Protected default constructor discourages throwing errors containing no
-    //! information.
-    ExceptionBase() {};
+ protected:
+  //! Protected default constructor discourages throwing errors containing no
+  //! information.
+  ExceptionBase(){};
 
-    //! Constructor used by derived classes that override GetMessage()
-    explicit ExceptionBase(const std::string& procedure);
+  //! Constructor used by derived classes that override GetMessage()
+  explicit ExceptionBase(const std::string& procedure);
 
-    //! The name of the procedure where the exception occurred
-    std::string procedure_;
-    mutable std::string formatted_message_; //!< Formatted message returned by what()
+  //! The name of the procedure where the exception occurred
+  std::string procedure_;
+  mutable std::string
+      formatted_message_;  //!< Formatted message returned by what()
 
-private:
-    std::string msg_; //!< Message associated with the exception
+ private:
+  std::string msg_;  //!< Message associated with the exception
 };
-
 
 //! Array size error.
 /*!
@@ -62,90 +58,77 @@ private:
  *
  * @ingroup errorhandling
  */
-class ArraySizeError : public ExceptionBase
-{
-public:
-    //! Constructor
-    /*!
-     * The length needed is supplied by the argument, reqd, and the
-     * length supplied is given by the argument sz.
-     *
-     * @param procedure String name for the function within which the error was
-     *             generated.
-     * @param sz   This is the length supplied
-     * @param reqd This is the required length needed 
-     */
-    ArraySizeError(const std::string& procedure, size_t sz, size_t reqd) :
-        ExceptionBase(procedure), sz_(sz), reqd_(reqd) {}
+class ArraySizeError : public ExceptionBase {
+ public:
+  //! Constructor
+  /*!
+   * The length needed is supplied by the argument, reqd, and the
+   * length supplied is given by the argument sz.
+   *
+   * @param procedure String name for the function within which the error was
+   *             generated.
+   * @param sz   This is the length supplied
+   * @param reqd This is the required length needed
+   */
+  ArraySizeError(const std::string& procedure, size_t sz, size_t reqd)
+      : ExceptionBase(procedure), sz_(sz), reqd_(reqd) {}
 
-    virtual std::string GetMessage() const;
-    virtual std::string GetClass() const {
-        return "ArraySizeError";
-    }
+  virtual std::string GetMessage() const;
+  virtual std::string GetClass() const { return "ArraySizeError"; }
 
-private:
-    size_t sz_, reqd_;
+ private:
+  size_t sz_, reqd_;
 };
-
 
 //! An array index is out of range.
 /*!
  *  @ingroup errorhandling
  */
-class IndexError : public ExceptionBase
-{
-public:
-    //! Constructor
-    /*!
-     * This class indicates an out-of-bounds array index.
-     *
-     * @param func String name for the function within which the error was
-     *             generated.
-     * @param arrayName name of the corresponding array
-     * @param m   This is the value of the out-of-bounds index.
-     * @param mmax This is the maximum allowed value of the index. The
-     *             minimum allowed value is assumed to be 0.
-     */
-    IndexError(const std::string& func, const std::string& arrayName, size_t m, size_t mmax) :
-        ExceptionBase(func), arrayName_(arrayName), m_(m), mmax_(mmax) {}
+class IndexError : public ExceptionBase {
+ public:
+  //! Constructor
+  /*!
+   * This class indicates an out-of-bounds array index.
+   *
+   * @param func String name for the function within which the error was
+   *             generated.
+   * @param arrayName name of the corresponding array
+   * @param m   This is the value of the out-of-bounds index.
+   * @param mmax This is the maximum allowed value of the index. The
+   *             minimum allowed value is assumed to be 0.
+   */
+  IndexError(const std::string& func, const std::string& arrayName, size_t m,
+             size_t mmax)
+      : ExceptionBase(func), arrayName_(arrayName), m_(m), mmax_(mmax) {}
 
-    virtual ~IndexError() throw() {};
-    virtual std::string GetMessage() const;
-    virtual std::string GetClass() const {
-        return "IndexError";
-    }
+  virtual ~IndexError() throw(){};
+  virtual std::string GetMessage() const;
+  virtual std::string GetClass() const { return "IndexError"; }
 
-private:
-    std::string arrayName_;
-    size_t m_, mmax_;
+ private:
+  std::string arrayName_;
+  size_t m_, mmax_;
 };
 
 //! An error indicating that an unimplemented function has been called
-class NotImplementedError : public ExceptionBase
-{
-public:
-    //! @param func Name of the unimplemented function, such as
-    //!     `ClassName::functionName`
-    NotImplementedError(const std::string& func) :
-        ExceptionBase(func, "Not implemented.") {}
+class NotImplementedError : public ExceptionBase {
+ public:
+  //! @param func Name of the unimplemented function, such as
+  //!     `ClassName::functionName`
+  NotImplementedError(const std::string& func)
+      : ExceptionBase(func, "Not implemented.") {}
 
-    virtual std::string GetClass() const {
-        return "NotImplementedError";
-    }
+  virtual std::string GetClass() const { return "NotImplementedError"; }
 };
 
 //! An error indicating that a value was not found
-class NotFoundError: public ExceptionBase
-{
-public:
-    //! @param func Name of the unimplemented function, such as
-    //!     `ClassName::functionName`
-    NotFoundError(const std::string& some) :
-        ExceptionBase(some, "Not found.") {}
+class NotFoundError : public ExceptionBase {
+ public:
+  //! @param func Name of the unimplemented function, such as
+  //!     `ClassName::functionName`
+  NotFoundError(const std::string& some) : ExceptionBase(some, "Not found.") {}
 
-    virtual std::string GetClass() const {
-        return "NotFoundError";
-    }
+  virtual std::string GetClass() const { return "NotFoundError"; }
 };
 
 #endif  // SRC_EXCEPTIONS_HPP

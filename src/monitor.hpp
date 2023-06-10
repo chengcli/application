@@ -2,72 +2,69 @@
 #define SRC_MONITOR_HPP_
 
 // C/C++
+#include <cstring>
 #include <fstream>
 #include <iostream>
-#include <string>
-#include <cstring>
-#include <memory>
 #include <map>
+#include <memory>
+#include <string>
 #include <vector>
 
-class Monitor 
-{
-protected:
-    //! Protected ctor access thru static member function Instance
-    
-public:
-    explicit Monitor(std::string name):
-        name_(name)
-    {}
+class Monitor {
+ protected:
+  //! Protected ctor access thru static member function Instance
 
-    //! Destructor - empty
-    virtual ~Monitor() {}
+ public:
+  explicit Monitor(std::string name) : name_(name) {}
 
-    //! Write a log message to the log device
-    /*!
-     * End-of-line character is appended to the message.
-     *
-     * @param msg      String message to be written to cout
-     */
-    virtual void Log(std::string const& msg, int code = 0);
+  //! Destructor - empty
+  virtual ~Monitor() {}
 
-    //! Write an error message to the error device
-    /*!
-     * End-of-line character is not appended to the message.
-     *
-     * @param msg      String message to be written to cout
-     */
-    virtual void Error(std::string const& msg, int code = 0);
+  //! Write a log message to the log device
+  /*!
+   * End-of-line character is appended to the message.
+   *
+   * @param msg      String message to be written to cout
+   */
+  virtual void Log(std::string const& msg, int code = 0);
 
-    //! Write a warning message to the log device
-    /*!
-     * End-of-line character is appended to the message.
-     * 
-     * @param msg     String message to be written to cout
-     */
-    virtual void Warn(std::string const& msg, int code = 0);
+  //! Write an error message to the error device
+  /*!
+   * End-of-line character is not appended to the message.
+   *
+   * @param msg      String message to be written to cout
+   */
+  virtual void Error(std::string const& msg, int code = 0);
 
-    void Enter();
+  //! Write a warning message to the log device
+  /*!
+   * End-of-line character is appended to the message.
+   *
+   * @param msg     String message to be written to cout
+   */
+  virtual void Warn(std::string const& msg, int code = 0);
 
-    void Leave();
+  void Enter();
 
-    bool SetLogOutput(std::string const& fname);
+  void Leave();
 
-    bool SetErrOutput(std::string const& fname);
+  bool SetLogOutput(std::string const& fname);
 
-protected:
-    virtual std::string getTimeStamp() const;
+  bool SetErrOutput(std::string const& fname);
 
-    virtual std::string getSectionID() const;
+ protected:
+  virtual std::string getTimeStamp() const;
 
-    void advance();
+  virtual std::string getSectionID() const;
 
-    std::shared_ptr<std::ostream>  log_device_;
-    std::shared_ptr<std::ostream>  err_device_;
+  void advance();
 
-    std::string name_;
+  std::shared_ptr<std::ostream> log_device_;
+  std::shared_ptr<std::ostream> err_device_;
 
-    static std::vector<uint32_t> sections_;
+  std::string name_;
+
+  static std::vector<uint32_t> sections_;
 };
 
 using MonitorPtr = std::unique_ptr<Monitor>;

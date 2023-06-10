@@ -1,4 +1,4 @@
-// application 
+// application
 #include <application/application.hpp>
 
 void func2() {
