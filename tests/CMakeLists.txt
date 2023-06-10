@@ -1,26 +1,24 @@
-## set up test cases ##
+# set up test cases ##
 
-file(GLOB _tests *.cpp)
-foreach(_test ${_tests})
-  foreach(build ${BUILD_TYPES})
-    string(TOLOWER ${build} buildl)
-    get_filename_component(_name ${_test} NAME_WE)
+string(TOLOWER ${CMAKE_BUILD_TYPE} buildl)
+string(TOUPPER ${CMAKE_BUILD_TYPE} buildu)
 
-    add_executable(${_name}.${buildl} ${_test})
+# Enable testing functionality
+enable_testing()
 
-    set_target_properties(${_name}.${buildl}
-      PROPERTIES
-      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${EXECUTABLE_RELDIR}"
-      COMPILE_FLAGS ${CMAKE_CXX_FLAGS_${build}}
-      )
+file(GLOB src_files *.cpp)
 
-    target_include_directories(${_name}.${buildl}
-      SYSTEM PRIVATE
-      ${DEBUGGER_INCLUDE_DIR}
-      )
+foreach(test ${src_files})
+  get_filename_component(name ${test} NAME_WE)
+  add_executable(${name}.${buildl} ${name}.cpp)
+  set_target_properties(
+    ${name}.${buildl}
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+               COMPILE_FLAGS ${CMAKE_CXX_FLAGS_${buildu}})
 
-    target_link_libraries(${_name}.${buildl}
-      ${DEBUGGER_LIBRARY_${build}}
-      )
-  endforeach()
+  target_include_directories(${name}.${buildl}
+                             PRIVATE ${APPLICATION_INCLUDE_DIR})
+
+  target_link_libraries(${name}.${buildl} application_${buildl})
+  add_test(NAME ${name}.${buildl} COMMAND ${name}.${buildl})
 endforeach()
