@@ -1,0 +1,16 @@
+#ifndef SRC_GLOBALS_HPP_
+#define SRC_GLOBALS_HPP_
+
+// C/C++
+#include <string>
+
+// Test if this is windows system (WINDOWS or NOT_WINDOWS)
+#define @WINDOWS_SYSTEM@
+
+namespace Globals {
+
+const char* search_paths = "@MYPATH@";
+
+};
+
+#endif  //  SRC_GLOBALS_HPP
