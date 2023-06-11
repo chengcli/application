@@ -15,4 +15,5 @@ add_library(${namel}_${buildl} STATIC ${src_files})
 set_target_properties(${namel}_${buildl} PROPERTIES COMPILE_FLAGS
                                                     ${CMAKE_C_FLAGS_${buildu}})
 
-target_include_directories(${namel}_${buildl} PRIVATE ${CMAKE_BINARY_DIR})
+target_include_directories(${namel}_${buildl}
+                           PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

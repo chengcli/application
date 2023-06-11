@@ -1,5 +1,5 @@
-#ifndef SRC_EXCEPTIONS_HPP
-#define SRC_EXCEPTIONS_HPP
+#ifndef SRC_EXCEPTIONS_HPP_
+#define SRC_EXCEPTIONS_HPP_
 
 // C/C++
 #include <exception>
@@ -20,7 +20,7 @@ class ExceptionBase : public std::exception {
       : procedure_(procedure), msg_(msg) {}
 
   //! Destructor for base class does nothing
-  virtual ~ExceptionBase() throw(){};
+  virtual ~ExceptionBase() throw() {}
 
   //! Get a description of the error
   const char* what() const throw();
@@ -37,7 +37,7 @@ class ExceptionBase : public std::exception {
  protected:
   //! Protected default constructor discourages throwing errors containing no
   //! information.
-  ExceptionBase(){};
+  ExceptionBase() {}
 
   //! Constructor used by derived classes that override GetMessage()
   explicit ExceptionBase(const std::string& procedure);
@@ -101,7 +101,7 @@ class IndexError : public ExceptionBase {
              size_t mmax)
       : ExceptionBase(func), arrayName_(arrayName), m_(m), mmax_(mmax) {}
 
-  virtual ~IndexError() throw(){};
+  virtual ~IndexError() throw() {}
   virtual std::string GetMessage() const;
   virtual std::string GetClass() const { return "IndexError"; }
 
@@ -115,7 +115,7 @@ class NotImplementedError : public ExceptionBase {
  public:
   //! @param func Name of the unimplemented function, such as
   //!     `ClassName::functionName`
-  NotImplementedError(const std::string& func)
+  explicit NotImplementedError(const std::string& func)
       : ExceptionBase(func, "Not implemented.") {}
 
   virtual std::string GetClass() const { return "NotImplementedError"; }
@@ -126,9 +126,10 @@ class NotFoundError : public ExceptionBase {
  public:
   //! @param func Name of the unimplemented function, such as
   //!     `ClassName::functionName`
-  NotFoundError(const std::string& some) : ExceptionBase(some, "Not found.") {}
+  explicit NotFoundError(const std::string& some)
+      : ExceptionBase(some, "Not found.") {}
 
   virtual std::string GetClass() const { return "NotFoundError"; }
 };
 
-#endif  // SRC_EXCEPTIONS_HPP
+#endif  // SRC_EXCEPTIONS_HPP_

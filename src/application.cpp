@@ -11,10 +11,9 @@
 #include <vector>
 
 // application
-#include <configure.hpp>
-
 #include "application.hpp"
 #include "exceptions.hpp"
+#include "globals.hpp"
 #include "monitor.hpp"
 
 std::string stripnonprint(const std::string& s) {
@@ -96,7 +95,7 @@ void Application::setDefaultDirectories() {
   std::string pathsep = ":";
 #endif
 
-  std::string s = std::string(Global::search_paths);
+  std::string s = std::string(Globals::search_paths);
   size_t start = 0;
   size_t end = s.find(pathsep);
   while (end != std::string::npos) {
