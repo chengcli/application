@@ -25,7 +25,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/compilers.cmake)
 # 1. set up project configuration ##
 message(STATUS "2. Set up project specific configuration ...")
 message(STATUS "Include ${CMAKE_SOURCE_DIR}/cmake/parameters.cmake")
-include(${CMAKE_SOURCE_DIR}/cmake/parameters.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/parameters.cmake)
 
 # 1. Set up project system libraries ##
 message(STATUS "3. Set up project system libraries----------------")
