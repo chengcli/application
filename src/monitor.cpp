@@ -13,7 +13,7 @@ static std::mutex section_mutex;
 
 void Monitor::Log(std::string const& msg) {
   advance();
-  char buf[80];
+  char buf[880];
   snprintf(buf, sizeof(buf), "Log, %s, %s, %s, \"%s\"\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str());
@@ -22,7 +22,7 @@ void Monitor::Log(std::string const& msg) {
 
 void Monitor::Error(std::string const& msg, int code) {
   advance();
-  char buf[80];
+  char buf[880];
   snprintf(buf, sizeof(buf), "Error, %s, %s, %s, \"%s\", %d\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str(), code);
@@ -31,7 +31,7 @@ void Monitor::Error(std::string const& msg, int code) {
 
 void Monitor::Warn(std::string const& msg, int code) {
   advance();
-  char buf[80];
+  char buf[880];
   snprintf(buf, sizeof(buf), "Warn, %s, %s, %s, \"%s\", %d\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str(), code);
@@ -79,7 +79,7 @@ bool Monitor::SetErrOutput(std::string const& fname) {
 
 std::string Monitor::getTimeStamp() const {
   std::time_t current_time = std::time(nullptr);
-  char time_stamp[80];
+  char time_stamp[880];
   std::strftime(time_stamp, sizeof(time_stamp), "\"%Y-%m-%d %H:%M:%S\"",
                 std::localtime(&current_time));
   return time_stamp;

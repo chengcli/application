@@ -89,7 +89,7 @@ using DeviceMap = std::map<std::string, DevicePtr>;
 template <typename T>
 void Monitor::Log(std::string const& msg, T const& a) {
   advance();
-  char buf[80];
+  char buf[880];
   snprintf(buf, sizeof(buf), "Log, %s, %s, %s, ", getTimeStamp().c_str(),
            name_.c_str(), getSectionID().c_str());
   (*log_device_) << buf << "\"" << msg << " = " << a << "\"\n";
@@ -98,7 +98,7 @@ void Monitor::Log(std::string const& msg, T const& a) {
 template <typename T>
 void Monitor::Log(std::string const& msg, T* a, int n) {
   advance();
-  char buf[80];
+  char buf[880];
   snprintf(buf, sizeof(buf), "Log, %s, %s, %s, ", getTimeStamp().c_str(),
            name_.c_str(), getSectionID().c_str());
   (*log_device_) << buf << "\"" << msg << " = ";
@@ -109,7 +109,7 @@ void Monitor::Log(std::string const& msg, T* a, int n) {
 template <typename T>
 void Monitor::Log(std::string const& msg, std::vector<T> const& a) {
   advance();
-  char buf[80];
+  char buf[880];
   snprintf(buf, sizeof(buf), "Log, %s, %s, %s, ", getTimeStamp().c_str(),
            name_.c_str(), getSectionID().c_str());
   (*log_device_) << buf << "\"" << msg << " = ";
