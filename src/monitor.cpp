@@ -98,6 +98,8 @@ std::string Monitor::getSectionID() const {
 }
 
 void Monitor::advance() {
+  std::unique_lock<std::mutex> lock(section_mutex);
+
   if (sections_.size() != 0) {
     sections_.back() += 1;
   } else {

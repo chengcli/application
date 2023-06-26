@@ -63,12 +63,14 @@ class Monitor {
 
   bool SetErrOutput(std::string const& fname);
 
+  static void Start() { advance(); }
+
  protected:
   virtual std::string getTimeStamp() const;
 
   virtual std::string getSectionID() const;
 
-  void advance();
+  static void advance();
 
   std::shared_ptr<std::ostream> log_device_;
   std::shared_ptr<std::ostream> err_device_;

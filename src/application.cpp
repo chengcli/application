@@ -60,6 +60,8 @@ Application* Application::GetInstance() {
   return myapp_;
 }
 
+void Application::Start() { Monitor::Start(); }
+
 void Application::Destroy() {
   std::unique_lock<std::mutex> lock(app_mutex);
 
