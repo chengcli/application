@@ -116,7 +116,7 @@ class NotImplementedError : public ExceptionBase {
   //! @param func Name of the unimplemented function, such as
   //!     `ClassName::functionName`
   explicit NotImplementedError(const std::string& func)
-      : ExceptionBase(func, "Not implemented.") {}
+      : ExceptionBase(func, "Not Implemented.") {}
 
   virtual std::string GetClass() const { return "NotImplementedError"; }
 };
@@ -127,7 +127,7 @@ class NotFoundError : public ExceptionBase {
   //! @param func Name of the unimplemented function, such as
   //!     `ClassName::functionName`
   explicit NotFoundError(const std::string& some)
-      : ExceptionBase(some, "Not found.") {}
+      : ExceptionBase(some, "Not Found.") {}
 
   virtual std::string GetClass() const { return "NotFoundError"; }
 };

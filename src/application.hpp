@@ -60,6 +60,9 @@ class Application {
   //! Destructor for class deletes global data
   virtual ~Application() {}
 
+  //! Static function that starts section counter
+  static void Start();
+
   //! Static function that destroys the application class's data
   static void Destroy();
 

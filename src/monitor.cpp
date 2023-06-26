@@ -1,4 +1,5 @@
 // C/C++
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -10,19 +11,19 @@
 
 static std::mutex section_mutex;
 
-void Monitor::Log(std::string const& msg, int code) {
+void Monitor::Log(std::string const& msg) {
   advance();
-  char buf[80];
-  snprintf(buf, sizeof(buf), "Log, %s, %s, %s, \"%s\", %d\n",
+  char buf[880];
+  snprintf(buf, sizeof(buf), "Log, %s, %12s, %s, \"%s\"\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
-           msg.c_str(), code);
+           msg.c_str());
   (*log_device_) << buf;
 }
 
 void Monitor::Error(std::string const& msg, int code) {
   advance();
-  char buf[80];
-  snprintf(buf, sizeof(buf), "Error; %s, %s, %s, \"%s\", %d\n",
+  char buf[880];
+  snprintf(buf, sizeof(buf), "Error, %s, %12s, %s, \"%s\", %d\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str(), code);
   (*err_device_) << buf;
@@ -30,8 +31,8 @@ void Monitor::Error(std::string const& msg, int code) {
 
 void Monitor::Warn(std::string const& msg, int code) {
   advance();
-  char buf[80];
-  snprintf(buf, sizeof(buf), "Warn, %s, %s, %s, \"%s\", %d\n",
+  char buf[880];
+  snprintf(buf, sizeof(buf), "Warn, %s, %12s, %s, \"%s\", %d\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str(), code);
   (*log_device_) << buf;
@@ -47,6 +48,7 @@ void Monitor::Leave() {
   std::unique_lock<std::mutex> lock(section_mutex);
 
   sections_.pop_back();
+  if (sections_.size() > 0) sections_.back() += 1;
 }
 
 bool Monitor::SetLogOutput(std::string const& fname) {
@@ -75,7 +77,13 @@ bool Monitor::SetErrOutput(std::string const& fname) {
   return true;
 }
 
-std::string Monitor::getTimeStamp() const { return "XXX"; }
+std::string Monitor::getTimeStamp() const {
+  std::time_t current_time = std::time(nullptr);
+  char time_stamp[880];
+  std::strftime(time_stamp, sizeof(time_stamp), "\"%Y-%m-%d %H:%M:%S\"",
+                std::localtime(&current_time));
+  return time_stamp;
+}
 
 std::string Monitor::getSectionID() const {
   if (sections_.size() == 0) {
@@ -90,6 +98,8 @@ std::string Monitor::getSectionID() const {
 }
 
 void Monitor::advance() {
+  std::unique_lock<std::mutex> lock(section_mutex);
+
   if (sections_.size() != 0) {
     sections_.back() += 1;
   } else {

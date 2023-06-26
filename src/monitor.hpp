@@ -25,7 +25,16 @@ class Monitor {
    *
    * @param msg      String message to be written to cout
    */
-  virtual void Log(std::string const& msg, int code = 0);
+  virtual void Log(std::string const& msg);
+
+  template <typename T>
+  void Log(std::string const& msg, T const& a);
+
+  template <typename T>
+  void Log(std::string const& msg, T* a, int n);
+
+  template <typename T>
+  void Log(std::string const& msg, std::vector<T> const& a);
 
   //! Write an error message to the error device
   /*!
@@ -43,6 +52,9 @@ class Monitor {
    */
   virtual void Warn(std::string const& msg, int code = 0);
 
+  template <typename T>
+  void Check(T const& val, double vmin, double max);
+
   void Enter();
 
   void Leave();
@@ -51,12 +63,14 @@ class Monitor {
 
   bool SetErrOutput(std::string const& fname);
 
+  static void Start() { advance(); }
+
  protected:
   virtual std::string getTimeStamp() const;
 
   virtual std::string getSectionID() const;
 
-  void advance();
+  static void advance();
 
   std::shared_ptr<std::ostream> log_device_;
   std::shared_ptr<std::ostream> err_device_;
@@ -73,5 +87,36 @@ using MonitorMap = std::map<std::string, MonitorPtr>;
 using DevicePtr = std::shared_ptr<std::ostream>;
 
 using DeviceMap = std::map<std::string, DevicePtr>;
+
+template <typename T>
+void Monitor::Log(std::string const& msg, T const& a) {
+  advance();
+  char buf[880];
+  snprintf(buf, sizeof(buf), "Log, %s, %12s, %s, ", getTimeStamp().c_str(),
+           name_.c_str(), getSectionID().c_str());
+  (*log_device_) << buf << "\"" << msg << " = " << a << "\"\n";
+}
+
+template <typename T>
+void Monitor::Log(std::string const& msg, T* a, int n) {
+  advance();
+  char buf[880];
+  snprintf(buf, sizeof(buf), "Log, %s, %12s, %s, ", getTimeStamp().c_str(),
+           name_.c_str(), getSectionID().c_str());
+  (*log_device_) << buf << "\"" << msg << " = ";
+  for (int i = 0; i < n; ++i) (*log_device_) << a[i] << " ";
+  (*log_device_) << "\"\n";
+}
+
+template <typename T>
+void Monitor::Log(std::string const& msg, std::vector<T> const& a) {
+  advance();
+  char buf[880];
+  snprintf(buf, sizeof(buf), "Log, %s, %12s, %s, ", getTimeStamp().c_str(),
+           name_.c_str(), getSectionID().c_str());
+  (*log_device_) << buf << "\"" << msg << " = ";
+  for (size_t i = 0; i < a.size(); ++i) (*log_device_) << a[i] << " ";
+  (*log_device_) << "\"\n";
+}
 
 #endif  // SRC_MONITOR_HPP_
