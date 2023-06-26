@@ -50,10 +50,10 @@ jobs:
         run: ctest -C ${{env.BUILD_TYPE}}
 
       - name: Compare A
-        run: wc ${{github.workspace}}/build/tests/A.out > A.check && diff A.check ${{github.workspace}}/tests/A.check
+        run: cat ${{github.workspace}}/build/tests/A.out | wc > A.check && diff A.check ${{github.workspace}}/tests/A.check
 
       - name: Compare B
-        run: wc ${{github.workspace}}/build/tests/B.out > B.check && diff B.check ${{github.workspace}}/tests/B.check
+        run: cat ${{github.workspace}}/build/tests/B.out | wc > B.check && diff B.check ${{github.workspace}}/tests/B.check
 
       - name: Compare main
-        run: wc ${{github.workspace}}/build/tests/main.out > main.check && diff main.check ${{github.workspace}}/tests/main.check
+        run: cat ${{github.workspace}}/build/tests/main.out | wc > main.check && diff main.check ${{github.workspace}}/tests/main.check
