@@ -48,6 +48,7 @@ void Monitor::Leave() {
   std::unique_lock<std::mutex> lock(section_mutex);
 
   sections_.pop_back();
+  if (sections_.size() > 0) sections_.back() += 1;
 }
 
 bool Monitor::SetLogOutput(std::string const& fname) {
