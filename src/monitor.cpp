@@ -1,4 +1,5 @@
 // C/C++
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -10,12 +11,12 @@
 
 static std::mutex section_mutex;
 
-void Monitor::Log(std::string const& msg, int code) {
+void Monitor::Log(std::string const& msg) {
   advance();
   char buf[80];
-  snprintf(buf, sizeof(buf), "Log, %s, %s, %s, \"%s\", %d\n",
+  snprintf(buf, sizeof(buf), "Log, %s, %s, %s, \"%s\"\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
-           msg.c_str(), code);
+           msg.c_str());
   (*log_device_) << buf;
 }
 
@@ -75,7 +76,13 @@ bool Monitor::SetErrOutput(std::string const& fname) {
   return true;
 }
 
-std::string Monitor::getTimeStamp() const { return "XXX"; }
+std::string Monitor::getTimeStamp() const {
+  std::time_t current_time = std::time(nullptr);
+  char time_stamp[80];
+  std::strftime(time_stamp, sizeof(time_stamp), "\"%Y-%m-%d %H:%M:%S\"",
+                std::localtime(&current_time));
+  return time_stamp;
+}
 
 std::string Monitor::getSectionID() const {
   if (sections_.size() == 0) {
