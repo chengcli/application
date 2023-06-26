@@ -37,7 +37,7 @@ Application::Logger::Logger(std::string name) {
     cur_monitor_ = app->GetMonitor(name);
     cur_monitor_->Enter();
   } else {
-    throw NotFoundError("Monitor: " + name);
+    throw NotFoundError("Monitor " + name);
   }
 }
 
@@ -81,6 +81,8 @@ bool Application::InstallMonitor(std::string const& mod,
     monitor->SetErrOutput(err_name);
     mymonitor_.insert({mod, std::move(monitor)});
   }
+
+  mymonitor_[mod]->Log("Installing monitor " + mod);
 
   return true;
 }
@@ -153,7 +155,7 @@ std::string Application::FindInputFile(const std::string& name) {
       if (fin) {
         return full_name;
       } else {
-        throw NotFoundError("Input file: " + name);
+        throw NotFoundError("Input file " + name);
       }
     }
   }
@@ -165,7 +167,7 @@ std::string Application::FindInputFile(const std::string& name) {
     if (fin) {
       return name;
     } else {
-      throw NotFoundError("Input file: " + name);
+      throw NotFoundError("Input file " + name);
     }
   }
 

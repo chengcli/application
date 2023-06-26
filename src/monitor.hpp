@@ -52,6 +52,9 @@ class Monitor {
    */
   virtual void Warn(std::string const& msg, int code = 0);
 
+  template <typename T>
+  void Check(T const& val, double vmin, double max);
+
   void Enter();
 
   void Leave();

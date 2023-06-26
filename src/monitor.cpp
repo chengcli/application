@@ -23,7 +23,7 @@ void Monitor::Log(std::string const& msg) {
 void Monitor::Error(std::string const& msg, int code) {
   advance();
   char buf[80];
-  snprintf(buf, sizeof(buf), "Error; %s, %s, %s, \"%s\", %d\n",
+  snprintf(buf, sizeof(buf), "Error, %s, %s, %s, \"%s\", %d\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str(), code);
   (*err_device_) << buf;
