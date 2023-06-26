@@ -14,7 +14,7 @@ static std::mutex section_mutex;
 void Monitor::Log(std::string const& msg) {
   advance();
   char buf[880];
-  snprintf(buf, sizeof(buf), "Log, %s, %s, %s, \"%s\"\n",
+  snprintf(buf, sizeof(buf), "Log, %s, %12s, %s, \"%s\"\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str());
   (*log_device_) << buf;
@@ -23,7 +23,7 @@ void Monitor::Log(std::string const& msg) {
 void Monitor::Error(std::string const& msg, int code) {
   advance();
   char buf[880];
-  snprintf(buf, sizeof(buf), "Error, %s, %s, %s, \"%s\", %d\n",
+  snprintf(buf, sizeof(buf), "Error, %s, %12s, %s, \"%s\", %d\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str(), code);
   (*err_device_) << buf;
@@ -32,7 +32,7 @@ void Monitor::Error(std::string const& msg, int code) {
 void Monitor::Warn(std::string const& msg, int code) {
   advance();
   char buf[880];
-  snprintf(buf, sizeof(buf), "Warn, %s, %s, %s, \"%s\", %d\n",
+  snprintf(buf, sizeof(buf), "Warn, %s, %12s, %s, \"%s\", %d\n",
            getTimeStamp().c_str(), name_.c_str(), getSectionID().c_str(),
            msg.c_str(), code);
   (*log_device_) << buf;

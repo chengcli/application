@@ -92,7 +92,7 @@ template <typename T>
 void Monitor::Log(std::string const& msg, T const& a) {
   advance();
   char buf[880];
-  snprintf(buf, sizeof(buf), "Log, %s, %s, %s, ", getTimeStamp().c_str(),
+  snprintf(buf, sizeof(buf), "Log, %s, %12s, %s, ", getTimeStamp().c_str(),
            name_.c_str(), getSectionID().c_str());
   (*log_device_) << buf << "\"" << msg << " = " << a << "\"\n";
 }
@@ -101,7 +101,7 @@ template <typename T>
 void Monitor::Log(std::string const& msg, T* a, int n) {
   advance();
   char buf[880];
-  snprintf(buf, sizeof(buf), "Log, %s, %s, %s, ", getTimeStamp().c_str(),
+  snprintf(buf, sizeof(buf), "Log, %s, %12s, %s, ", getTimeStamp().c_str(),
            name_.c_str(), getSectionID().c_str());
   (*log_device_) << buf << "\"" << msg << " = ";
   for (int i = 0; i < n; ++i) (*log_device_) << a[i] << " ";
@@ -112,7 +112,7 @@ template <typename T>
 void Monitor::Log(std::string const& msg, std::vector<T> const& a) {
   advance();
   char buf[880];
-  snprintf(buf, sizeof(buf), "Log, %s, %s, %s, ", getTimeStamp().c_str(),
+  snprintf(buf, sizeof(buf), "Log, %s, %12s, %s, ", getTimeStamp().c_str(),
            name_.c_str(), getSectionID().c_str());
   (*log_device_) << buf << "\"" << msg << " = ";
   for (size_t i = 0; i < a.size(); ++i) (*log_device_) << a[i] << " ";
