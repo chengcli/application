@@ -132,4 +132,15 @@ class NotFoundError : public ExceptionBase {
   virtual std::string GetClass() const { return "NotFoundError"; }
 };
 
+//! An error indicating that a value was not valid
+class InvalidValueError : public ExceptionBase {
+ public:
+  //! @param func Name of the unimplemented function, such as
+  //!     `ClassName::functionName`
+  explicit InvalidValueError(const std::string& some)
+      : ExceptionBase(some, "Is Invalid.") {}
+
+  virtual std::string GetClass() const { return "InvalidValueError"; }
+};
+
 #endif  // SRC_EXCEPTIONS_HPP_
