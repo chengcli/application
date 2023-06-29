@@ -48,3 +48,11 @@ std::string IndexError::GetMessage() const {
            arrayName_.c_str(), m_, mmax_);
   return buf;
 }
+
+std::string RuntimeError::GetMessage() const {
+  char buf[160];
+  snprintf(buf, sizeof(buf),
+           "RuntimeError: Expect %f but get %f for variable %s.",
+           expect_, val_, var_.c_str());
+  return buf;
+}
