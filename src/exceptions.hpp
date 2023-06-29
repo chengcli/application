@@ -146,4 +146,21 @@ class InvalidValueError : public ExceptionBase {
   virtual std::string GetClass() const { return "InvalidValueError"; }
 };
 
+//! An general runtime error
+class RuntimeError : public ExceptionBase {
+ public:
+  //! @param func Name of the unimplemented function, such as
+  //!     `ClassName::functionName`
+  RuntimeError(const std::string& func, std::string const& var,
+      double expect, double val)
+      : ExceptionBase(func), var_(var), expect_(expect), val_(val) {}
+
+  virtual std::string GetMessage() const;
+  virtual std::string GetClass() const { return "RuntimeError"; }
+ protected:
+  std::string var_;
+  double expect_;
+  double val_;
+};
+
 #endif  // SRC_EXCEPTIONS_HPP_
