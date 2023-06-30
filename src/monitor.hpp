@@ -63,7 +63,7 @@ class Monitor {
 
   bool SetErrOutput(std::string const& fname);
 
-  static void Start() { advance(); }
+  static void Start();
 
  protected:
   virtual std::string getTimeStamp() const;
