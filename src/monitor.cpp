@@ -9,6 +9,10 @@
 #include "application.hpp"
 #include "monitor.hpp"
 
+struct NullDeleter {
+  void operator()(void const*) const {}
+};
+
 static std::mutex section_mutex;
 
 void Monitor::Log(std::string const& msg) {
@@ -47,6 +51,9 @@ void Monitor::Enter() {
 void Monitor::Leave() {
   std::unique_lock<std::mutex> lock(section_mutex);
 
+  log_device_->flush();
+  err_device_->flush();
+
   sections_.pop_back();
   if (sections_.size() > 0) sections_.back() += 1;
 }
@@ -57,7 +64,11 @@ bool Monitor::SetLogOutput(std::string const& fname) {
   if (app->HasDevice(fname)) {
     log_device_ = app->GetDevice(fname);
   } else {
-    log_device_ = std::make_shared<std::ofstream>(fname, std::ios::out);
+    if (fname == "stdout") {
+      log_device_ = std::shared_ptr<std::ostream>(&std::cout, NullDeleter());
+    } else {
+      log_device_ = std::make_shared<std::ofstream>(fname, std::ios::out);
+    }
     app->InstallDevice(fname, log_device_);
   }
 
@@ -70,7 +81,11 @@ bool Monitor::SetErrOutput(std::string const& fname) {
   if (app->HasDevice(fname)) {
     err_device_ = app->GetDevice(fname);
   } else {
-    err_device_ = std::make_shared<std::ofstream>(fname, std::ios::out);
+    if (fname == "stderr") {
+      err_device_ = std::shared_ptr<std::ostream>(&std::cerr, NullDeleter());
+    } else {
+      err_device_ = std::make_shared<std::ofstream>(fname, std::ios::out);
+    }
     app->InstallDevice(fname, err_device_);
   }
 
@@ -95,6 +110,13 @@ std::string Monitor::getSectionID() const {
     }
     return str;
   }
+}
+
+void Monitor::Start() {
+  std::unique_lock<std::mutex> lock(section_mutex);
+
+  sections_.clear();
+  sections_.push_back(1);
 }
 
 void Monitor::advance() {

@@ -33,12 +33,12 @@ static std::mutex app_mutex;
 Application::Logger::Logger(std::string name) {
   auto app = Application::GetInstance();
 
-  if (app->HasMonitor(name)) {
-    cur_monitor_ = app->GetMonitor(name);
-    cur_monitor_->Enter();
-  } else {
-    throw NotFoundError("Logger", "Monitor " + name);
+  if (!app->HasMonitor(name)) {
+    app->InstallMonitor(name, "stdout", "stderr");
   }
+
+  cur_monitor_ = app->GetMonitor(name);
+  cur_monitor_->Enter();
 }
 
 Application::Logger::~Logger() { cur_monitor_->Leave(); }
