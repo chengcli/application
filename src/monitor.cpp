@@ -51,9 +51,6 @@ void Monitor::Enter() {
 void Monitor::Leave() {
   std::unique_lock<std::mutex> lock(section_mutex);
 
-  //(*log_device_) << std::flush;
-  //(*err_device_) << std::flush;
-
   sections_.pop_back();
   if (sections_.size() > 0) sections_.back() += 1;
 }
