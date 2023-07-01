@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unistd.h>   // alarm() Unix OS utility; not in C standard --> no <cunistd>
 #include <memory>
+#include <mutex>
 
 // application
 #include "globals.hpp"
