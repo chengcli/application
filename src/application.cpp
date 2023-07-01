@@ -10,13 +10,17 @@
 #include <utility>
 #include <vector>
 
+// POSIX C extensions
+#include <sys/stat.h>  // mkdir()
+#include <unistd.h>    // chdir()
+
 // application
 #include "application.hpp"
 #include "exceptions.hpp"
 #include "globals.hpp"
 #include "monitor.hpp"
 #include "command_line.hpp"
-#include "signal_handler.hpp"
+#include "signal.hpp"
 
 #ifdef MPI_PARALLEL
 #include <mpi.h>
@@ -71,9 +75,24 @@ Application* Application::GetInstance() {
   return myapp_;
 }
 
+void Application::ChangeRunDir(const char *pdir) {
+  std::stringstream msg;
+
+  if (pdir == nullptr || *pdir == '\0') return;
+
+  mkdir(pdir, 0775);
+  if (chdir(pdir)) {
+    char buf[1024];
+    snprintf(buf, 1024, "Cannot cd to directory %s", pdir);
+    throw RuntimeError("ChangeRunDir", buf);
+  }
+
+  return;
+}
+
 void Application::Start(int argc, char** argv) {
   auto cli = CommandLine::ParseArguments(argc, argv);
-  auto sig = SignalHandler::GetInstance();
+  auto sig = Signal::GetInstance();
 
   Globals::tstart = clock();
 
@@ -117,7 +136,7 @@ void Application::Start(int argc, char** argv) {
 void Application::Destroy() {
   std::unique_lock<std::mutex> lock(app_mutex);
 
-  auto sig = SignalHandler::GetInstance();
+  auto sig = Signal::GetInstance();
   auto cli = CommandLine::GetInstance();
 
   if (Globals::my_rank == 0) {
@@ -149,7 +168,7 @@ void Application::Destroy() {
   }
 
   CommandLine::Destroy();
-  SignalHandler::Destroy();
+  Signal::Destroy();
 }
 
 bool Application::InstallMonitor(std::string const& mod,
