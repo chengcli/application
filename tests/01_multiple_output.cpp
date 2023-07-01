@@ -21,6 +21,8 @@ void func1() {
 }
 
 int main(int argc, char **argv) {
+  Application::Start(argc, argv);
+
   auto app = Application::GetInstance();
 
   app->InstallMonitor("main", "main.out", "main.err");

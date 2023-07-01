@@ -28,8 +28,8 @@ message(STATUS "Include ${CMAKE_SOURCE_DIR}/cmake/parameters.cmake")
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/parameters.cmake)
 
 # 1. Set up project system libraries ##
-message(STATUS "3. Set up project system libraries----------------")
-message(STATUS "----- Placeholder ----- ")
+message(STATUS "3. Set up project banner ...")
+add_library(banner STATIC banner.cpp)
 
 # 1. Set up project configure file and library ##
 message(STATUS "4. Set up project libraries")
