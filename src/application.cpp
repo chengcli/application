@@ -20,7 +20,7 @@
 #include "globals.hpp"
 #include "monitor.hpp"
 #include "command_line.hpp"
-#include "signal_handler.hpp"
+#include "signal.hpp"
 
 #ifdef MPI_PARALLEL
 #include <mpi.h>
@@ -92,7 +92,7 @@ void Application::ChangeRunDir(const char *pdir) {
 
 void Application::Start(int argc, char** argv) {
   auto cli = CommandLine::ParseArguments(argc, argv);
-  auto sig = SignalHandler::GetInstance();
+  auto sig = Signal::GetInstance();
 
   Globals::tstart = clock();
 
@@ -136,7 +136,7 @@ void Application::Start(int argc, char** argv) {
 void Application::Destroy() {
   std::unique_lock<std::mutex> lock(app_mutex);
 
-  auto sig = SignalHandler::GetInstance();
+  auto sig = Signal::GetInstance();
   auto cli = CommandLine::GetInstance();
 
   if (Globals::my_rank == 0) {
@@ -168,7 +168,7 @@ void Application::Destroy() {
   }
 
   CommandLine::Destroy();
-  SignalHandler::Destroy();
+  Signal::Destroy();
 }
 
 bool Application::InstallMonitor(std::string const& mod,

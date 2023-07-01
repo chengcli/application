@@ -1,13 +1,13 @@
-#ifndef SRC_SIGNAL_HANDLER_HPP_
-#define SRC_SIGNAL_HANDLER_HPP_
+#ifndef SRC_SIGNAL_HPP_
+#define SRC_SIGNAL_HPP_
 
 // C/C++
 #include <csignal>   // sigset_t POSIX C extension
 #include <cstdint>   // std::int64_t
 
-class SignalHandler {
+class Signal {
 protected:
-  SignalHandler();
+  Signal();
 
 public:
   enum {
@@ -17,7 +17,7 @@ public:
     NSIGNAL = 3,
   };
 
-  static SignalHandler* GetInstance();
+  static Signal* GetInstance();
   static void Destroy();
   static void SetSignalFlag(int s);
 
@@ -32,7 +32,7 @@ protected:
 
 private:
   //! Pointer to the single SingnalHandler instance
-  static SignalHandler* mysig_;
+  static Signal* mysig_;
 };
 
-#endif // SRC_SIGNAL_HANDLER_HPP_
+#endif // SRC_SIGNAL_HPP_

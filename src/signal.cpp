@@ -8,7 +8,7 @@
 
 // application
 #include "globals.hpp"
-#include "signal_handler.hpp"
+#include "signal.hpp"
 
 #ifdef MPI_PARALLEL
 #include <mpi.h>
@@ -16,27 +16,27 @@
 
 static std::mutex sig_mutex;
 
-SignalHandler* SignalHandler::GetInstance() {
+Signal* Signal::GetInstance() {
   // RAII
   std::unique_lock<std::mutex> lock(sig_mutex);
 
-  if (SignalHandler::mysig_ == nullptr) {
-    SignalHandler::mysig_ = new SignalHandler();
+  if (Signal::mysig_ == nullptr) {
+    Signal::mysig_ = new Signal();
   }
 
   return mysig_;
 }
 
-void SignalHandler::Destroy() {
+void Signal::Destroy() {
   std::unique_lock<std::mutex> lock(sig_mutex);
 
-  if (SignalHandler::mysig_ != nullptr) {
-    delete SignalHandler::mysig_;
-    SignalHandler::mysig_ = nullptr;
+  if (Signal::mysig_ != nullptr) {
+    delete Signal::mysig_;
+    Signal::mysig_ = nullptr;
   }
 }
 
-SignalHandler::SignalHandler() {
+Signal::Signal() {
   for (int n=0; n<NSIGNAL; n++) {
     signalflag_[n]=0;
   }
@@ -53,7 +53,7 @@ SignalHandler::SignalHandler() {
   sigaddset(&mask_, SIGALRM);
 }
 
-int SignalHandler::CheckSignalFlags() {
+int Signal::CheckSignalFlags() {
   // Currently, only checking for nonzero return code at the end of each timestep in
   // main.cpp; i.e. if an issue prevents a process from reaching the end of a cycle, the
   // signals will never be handled by that process / the solver may hang
@@ -70,7 +70,7 @@ int SignalHandler::CheckSignalFlags() {
   return ret;
 }
 
-int SignalHandler::GetSignalFlag(int s) {
+int Signal::GetSignalFlag(int s) {
   int ret=-1;
   switch(s) {
     case SIGTERM:
@@ -89,7 +89,7 @@ int SignalHandler::GetSignalFlag(int s) {
   return ret;
 }
 
-void SignalHandler::SetSignalFlag(int s) {
+void Signal::SetSignalFlag(int s) {
   // Signal handler functions must have C linkage; C++ linkage is implemantation-defined
   switch(s) {
     case SIGTERM:
@@ -111,15 +111,15 @@ void SignalHandler::SetSignalFlag(int s) {
   return;
 }
 
-void SignalHandler::SetWallTimeAlarm(int t) {
+void Signal::SetWallTimeAlarm(int t) {
   alarm(t);
   return;
 }
 
-void SignalHandler::CancelWallTimeAlarm() {
+void Signal::CancelWallTimeAlarm() {
   alarm(0);
   return;
 }
 
-int SignalHandler::signalflag_[SignalHandler::NSIGNAL];
-SignalHandler* SignalHandler::mysig_ = nullptr;
+int Signal::signalflag_[Signal::NSIGNAL];
+Signal* Signal::mysig_ = nullptr;
