@@ -21,6 +21,8 @@ void func1() {
 }
 
 int main(int argc, char **argv) {
+  Application::Start(argc, argv);
+
   func1();
 
   Application::Destroy();

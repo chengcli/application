@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 // application
 #include "monitor.hpp"
@@ -61,7 +62,7 @@ class Application {
   virtual ~Application() {}
 
   //! Static function that starts section counter
-  static void Start();
+  static void Start(int argc, char** argv);
 
   //! Static function that destroys the application class's data
   static void Destroy();
@@ -153,6 +154,10 @@ class Application {
   void InstallDevice(std::string const& name, DevicePtr device) {
     mydevice_.insert({name, device});
   }
+
+  static void ShowConfig();
+
+  static void ChangeRunDir(const char *pdir);
 
  protected:
   //! Set the default directories for input files.

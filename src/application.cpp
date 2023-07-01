@@ -15,7 +15,18 @@
 #include "exceptions.hpp"
 #include "globals.hpp"
 #include "monitor.hpp"
+#include "command_line.hpp"
+#include "signal_handler.hpp"
 
+#ifdef MPI_PARALLEL
+#include <mpi.h>
+#endif
+
+namespace Globals {
+clock_t tstart;
+int mpi_tag_ub;
+}  // namespace Globals
+   
 std::string stripnonprint(const std::string& s) {
   std::string ss = "";
   for (size_t i = 0; i < s.size(); i++) {
@@ -53,22 +64,92 @@ Application* Application::GetInstance() {
   // RAII
   std::unique_lock<std::mutex> lock(app_mutex);
 
-  if (Application::myapp_ == nullptr) {
-    Application::myapp_ = new Application();
+  if (myapp_ == nullptr) {
+    myapp_ = new Application();
   }
 
   return myapp_;
 }
 
-void Application::Start() { Monitor::Start(); }
+void Application::Start(int argc, char** argv) {
+  auto cli = CommandLine::ParseArguments(argc, argv);
+  auto sig = SignalHandler::GetInstance();
+
+  Globals::tstart = clock();
+
+  if (Globals::my_rank == 0 && cli->wtlim > 0)
+    sig->SetWallTimeAlarm(cli->wtlim);
+
+#ifdef MPI_PARALLEL
+  if (MPI_SUCCESS != MPI_Init(&argc, &argv)) {
+    throw RuntimeError("Start", "MPI initialization failed");
+  }
+
+  // Get process id (rank) in MPI_COMM_WORLD
+  if (MPI_SUCCESS != MPI_Comm_rank(MPI_COMM_WORLD, &(Globals::my_rank))) {
+    throw RuntimeError("MPI_Comm_rank failed");
+  }
+
+  // Get total number of MPI processes (ranks)
+  if (MPI_SUCCESS != MPI_Comm_size(MPI_COMM_WORLD, &Globals::nranks)) {
+    throw RuntimeError("MPI_Comm_size failed");
+  }
+
+  // Get maximum value of MPI tag
+  MPI_Aint *tag_ub_ptr;
+  int att_flag;
+  MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &tag_ub_ptr, &att_flag);
+  Globals::mpi_tag_ub = *tag_ub_ptr;
+
+#else  // no MPI
+  Globals::my_rank = 0;
+  Globals::nranks = 1;
+  Globals::mpi_tag_ub = 0;
+#endif
+
+  if (Globals::my_rank == 0) {
+    std::cout << Globals::banner << std::endl;
+  }
+
+  Monitor::Start(); 
+}
 
 void Application::Destroy() {
   std::unique_lock<std::mutex> lock(app_mutex);
+
+  auto sig = SignalHandler::GetInstance();
+  auto cli = CommandLine::GetInstance();
+
+  if (Globals::my_rank == 0) {
+    if (sig->GetSignalFlag(SIGTERM) != 0) {
+      std::cout << std::endl << "Terminating on Terminate signal" << std::endl;
+    } else if (sig->GetSignalFlag(SIGINT) != 0) {
+      std::cout << std::endl << "Terminating on Interrupt signal" << std::endl;
+    } else if (sig->GetSignalFlag(SIGALRM) != 0) {
+      std::cout << std::endl << "Terminating on wall-time limit" << std::endl;
+    } else {
+      std::cout << std::endl << "Terminating on success" << std::endl;
+    }
+
+    clock_t tstop = clock();
+    double cpu_time =
+        (tstop > Globals::tstart ? static_cast<double>(tstop - Globals::tstart)
+                                 : 1.0) /
+        static_cast<double>(CLOCKS_PER_SEC);
+    std::cout << "cpu time used  = " << cpu_time << " (s)" << std::endl;
+  }
+
+
+  if (Globals::my_rank == 0 && cli->wtlim > 0)
+    sig->CancelWallTimeAlarm();
 
   if (Application::myapp_ != nullptr) {
     delete Application::myapp_;
     Application::myapp_ = nullptr;
   }
+
+  CommandLine::Destroy();
+  SignalHandler::Destroy();
 }
 
 bool Application::InstallMonitor(std::string const& mod,

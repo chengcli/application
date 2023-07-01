@@ -17,6 +17,6 @@ foreach(test ${src_files})
   target_include_directories(${name}.${buildl}
                              PRIVATE ${APPLICATION_INCLUDE_DIR})
 
-  target_link_libraries(${name}.${buildl} application_${buildl})
+  target_link_libraries(${name}.${buildl} application_${buildl} banner)
   add_test(NAME ${name}.${buildl} COMMAND ${name}.${buildl})
 endforeach()

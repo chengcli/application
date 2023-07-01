@@ -49,7 +49,7 @@ std::string IndexError::GetMessage() const {
   return buf;
 }
 
-std::string RuntimeError::GetMessage() const {
+std::string ValueError::GetMessage() const {
   char buf[160];
   snprintf(buf, sizeof(buf),
            "RuntimeError: Expect %f but get %f for variable %s.",

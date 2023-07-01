@@ -135,32 +135,28 @@ class NotFoundError : public ExceptionBase {
   virtual std::string GetClass() const { return "NotFoundError"; }
 };
 
-//! An error indicating that a value was not valid
-class InvalidValueError : public ExceptionBase {
+//! An error indicating that a value was wrong
+class ValueError : public ExceptionBase {
  public:
-  //! @param func Name of the unimplemented function, such as
-  //!     `ClassName::functionName`
-  InvalidValueError(const std::string& func, std::string const& val)
-      : ExceptionBase(func, val + " is invalid.") {}
+  ValueError(const std::string& func, std::string const& var,
+      double expect, double val)
+      : ExceptionBase(func), var_(var), expect_(expect), val_(val) {}
 
-  virtual std::string GetClass() const { return "InvalidValueError"; }
+  virtual std::string GetMessage() const;
+  virtual std::string GetClass() const { return "ValueError"; }
+ protected:
+  std::string var_;
+  double expect_;
+  double val_;
 };
 
 //! An general runtime error
 class RuntimeError : public ExceptionBase {
  public:
-  //! @param func Name of the unimplemented function, such as
-  //!     `ClassName::functionName`
-  RuntimeError(const std::string& func, std::string const& var,
-      double expect, double val)
-      : ExceptionBase(func), var_(var), expect_(expect), val_(val) {}
+  RuntimeError(const std::string& func, std::string const& msg)
+      : ExceptionBase(func, msg) {}
 
-  virtual std::string GetMessage() const;
   virtual std::string GetClass() const { return "RuntimeError"; }
- protected:
-  std::string var_;
-  double expect_;
-  double val_;
 };
 
 #endif  // SRC_EXCEPTIONS_HPP_

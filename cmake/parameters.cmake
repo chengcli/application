@@ -1,12 +1,15 @@
 # define default parameters
 
-macro(set_if_empty _variable)
+macro(SET_IF_EMPTY _variable)
   if("${${_variable}}" STREQUAL "")
     set(${_variable} ${ARGN})
   endif()
 endmacro()
 
 # populate the default values
-set_if_empty(WINDOWS_SYSTEM "NOT_WINDOWS")
+SET_IF_EMPTY(WINDOWS_SYSTEM "NOT_WINDOWS")
 
-set_if_empty(MYPATH "")
+SET_IF_EMPTY(MYPATH "")
+
+# MPI parallelization (MPI_PARALLEL or NOT_MPI_PARALLEL)
+SET_IF_EMPTY(MPI_OPTION "NOT_MPI_PARALLEL")
