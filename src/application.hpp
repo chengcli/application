@@ -155,8 +155,6 @@ class Application {
     mydevice_.insert({name, device});
   }
 
-  static void ShowConfig();
-
   static void ChangeRunDir(const char *pdir);
 
  protected:

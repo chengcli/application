@@ -10,6 +10,10 @@
 #include <utility>
 #include <vector>
 
+// POSIX C extensions
+#include <sys/stat.h>  // mkdir()
+#include <unistd.h>    // chdir()
+
 // application
 #include "application.hpp"
 #include "exceptions.hpp"
@@ -69,6 +73,21 @@ Application* Application::GetInstance() {
   }
 
   return myapp_;
+}
+
+void Application::ChangeRunDir(const char *pdir) {
+  std::stringstream msg;
+
+  if (pdir == nullptr || *pdir == '\0') return;
+
+  mkdir(pdir, 0775);
+  if (chdir(pdir)) {
+    char buf[1024];
+    snprintf(buf, 1024, "Cannot cd to directory %s", pdir);
+    throw RuntimeError("ChangeRunDir", buf);
+  }
+
+  return;
 }
 
 void Application::Start(int argc, char** argv) {
