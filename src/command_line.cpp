@@ -38,9 +38,6 @@ void CommandLine::Destroy() {
 }
 
 CommandLine* CommandLine::GetInstance() {
-  // RAII
-  std::unique_lock<std::mutex> lock(cli_mutex);
-
   if (CommandLine::mycli_ == nullptr) {
     throw RuntimeError("CommandLine", 
         "GetInstance() called before ParseArguments()");
@@ -50,6 +47,9 @@ CommandLine* CommandLine::GetInstance() {
 }
 
 CommandLine* CommandLine::ParseArguments(int argc, char** argv) {
+  // RAII
+  std::unique_lock<std::mutex> lock(cli_mutex);
+
   mycli_ = new CommandLine(argc, argv);
 
   mycli_->argc = argc;
