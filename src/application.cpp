@@ -106,12 +106,12 @@ void Application::Start(int argc, char** argv) {
 
   // Get process id (rank) in MPI_COMM_WORLD
   if (MPI_SUCCESS != MPI_Comm_rank(MPI_COMM_WORLD, &(Globals::my_rank))) {
-    throw RuntimeError("MPI_Comm_rank failed");
+    throw RuntimeError("Start", "MPI_Comm_rank failed");
   }
 
   // Get total number of MPI processes (ranks)
   if (MPI_SUCCESS != MPI_Comm_size(MPI_COMM_WORLD, &Globals::nranks)) {
-    throw RuntimeError("MPI_Comm_size failed");
+    throw RuntimeError("Start", "MPI_Comm_size failed");
   }
 
   // Get maximum value of MPI tag
