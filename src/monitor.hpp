@@ -3,7 +3,8 @@
 
 // C/C++
 #include <cstring>
-#include <iosfwd>
+#include <iostream>
+#include <fstream>
 #include <map>
 #include <memory>
 #include <string>
