@@ -210,7 +210,7 @@ void Application::setDefaultDirectories() {
   input_dirs_.push_back(s.substr(start, end));
 }
 
-void Application::AddDataDirectory(const std::string& dir) {
+void Application::AddResourceDirectory(const std::string& dir) {
   std::unique_lock<std::mutex> dirLock(dir_mutex);
   if (input_dirs_.empty()) {
     setDefaultDirectories();
@@ -238,7 +238,7 @@ void Application::AddDataDirectory(const std::string& dir) {
   input_dirs_.insert(input_dirs_.begin(), d);
 }
 
-std::string Application::FindInputFile(const std::string& name) {
+std::string Application::FindResource(const std::string& name) {
   std::unique_lock<std::mutex> dirLock(dir_mutex);
   std::string::size_type islash = name.find('/');
   std::string::size_type ibslash = name.find('\\');
@@ -257,7 +257,7 @@ std::string Application::FindInputFile(const std::string& name) {
       if (fin) {
         return full_name;
       } else {
-        throw NotFoundError("FindInputFile", "Input file " + name);
+        throw NotFoundError("FindResource", "Resource " + name);
       }
     }
   }
@@ -269,7 +269,7 @@ std::string Application::FindInputFile(const std::string& name) {
     if (fin) {
       return name;
     } else {
-      throw NotFoundError("FindInputFile", "Input file " + name);
+      throw NotFoundError("FindResource", "Resource " + name);
     }
   }
 
@@ -283,7 +283,7 @@ std::string Application::FindInputFile(const std::string& name) {
       return full_name;
     }
   }
-  std::string msg = "\nInput file " + name + " not found in director";
+  std::string msg = "\nResource " + name + " not found in director";
   msg += (nd_ == 1 ? "y " : "ies ");
   for (size_t i = 0; i < nd_; i++) {
     msg += "\n'" + dirs[i] + "'";
@@ -298,7 +298,7 @@ std::string Application::FindInputFile(const std::string& name) {
   throw NotFoundError(msg);
 }
 
-std::string Application::GetDataDirectories(const std::string& sep) {
+std::string Application::GetResourceDirectories(const std::string& sep) {
   std::stringstream ss;
   for (size_t i = 0; i < input_dirs_.size(); ++i) {
     if (i != 0) {
