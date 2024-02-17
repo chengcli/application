@@ -69,13 +69,13 @@ class Application {
 
   //!  Add a directory to the data file search path.
   /*!
-   * @ingroup inputfiles
+   * @ingroup resource
    *
    * @param dir  String name for the directory to be added to the search path
    */
-  void AddDataDirectory(const std::string& dir);
+  void AddResourceDirectory(const std::string& dir);
 
-  //! Find an input file.
+  //! Find a resource file.
   /*!
    * This routine will search for a file in the default locations specified
    * for the application. See the routine setDefaultDirectories() listed
@@ -94,9 +94,9 @@ class Application {
    *
    * If the file is not found an exception is thrown.
    *
-   * @ingroup inputfiles
+   * @ingroup resource
    */
-  std::string FindInputFile(const std::string& name);
+  std::string FindResource(const std::string& name);
 
   //! Get the data directories
   /*!
@@ -106,9 +106,9 @@ class Application {
    * @param sep Separator to use between directories in the string
    * @return A string of directories separated by the input sep
    *
-   * @ingroup inputfiles
+   * @ingroup resource
    */
-  std::string GetDataDirectories(const std::string& sep);
+  std::string GetResourceDirectories(const std::string& sep);
 
   //! Set the versions of Python to try when loading user-defined extensions,
   //! in order of preference. Separate multiple versions with commas, for
